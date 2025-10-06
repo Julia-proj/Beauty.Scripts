@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+/* Smooth transitions */
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Mobile padding adjustment for sticky CTA */
+@media (max-width: 1024px) {
+  body {
+    padding-bottom: 80px;
+  }
+}
+
+/* Refeel-style animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+/* Subtle hover effects */
+.hover-lift {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Focus states */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.025em;
+}
+
+/* Backdrop blur support */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+}
+
+/* Color fixes for dynamic classes */
+.bg-blue-50 { background-color: rgb(239 246 255); }
+.bg-green-50 { background-color: rgb(240 253 244); }
+.bg-red-50 { background-color: rgb(254 242 242); }
+.bg-purple-50 { background-color: rgb(250 245 255); }
+.bg-orange-50 { background-color: rgb(255 247 237); }
+.bg-gray-50 { background-color: rgb(249 250 251); }
+
+.text-blue-600 { color: rgb(37 99 235); }
+.text-green-600 { color: rgb(22 163 74); }
+.text-red-500 { color: rgb(239 68 68); }
+.text-purple-600 { color: rgb(147 51 234); }
+.text-orange-500 { color: rgb(249 115 22); }
+.text-gray-600 { color: rgb(75 85 99); }
+
+/* Стиль для карточек "Кому подходят скрипты" */
+.who-card {
+  border-color: rgba(34, 139, 87, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.who-card:hover {
+  border-color: rgba(34, 139, 87, 0.35);
+  box-shadow: 0 0 20px rgba(34, 139, 87, 0.12);
+}
