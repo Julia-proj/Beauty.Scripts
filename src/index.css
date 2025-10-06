@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -13,6 +13,16 @@ html {
 body {
   font-family: 'Inter', sans-serif;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  background: linear-gradient(135deg, #fefefe 0%, #f9fafb 50%, #fefefe 100%);
+  line-height: 1.6;
+}
+
+p {
+  line-height: 1.65;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
 }
 
 /* Smooth transitions */
@@ -102,6 +112,9 @@ h1, h2, h3, h4, h5, h6 {
 .text-purple-600 { color: rgb(147 51 234); }
 .text-orange-500 { color: rgb(249 115 22); }
 .text-gray-600 { color: rgb(75 85 99); }
+.text-rose-700 { color: rgb(190 18 60); }
+.text-emerald-700 { color: rgb(4 120 87); }
+.text-teal-700 { color: rgb(15 118 110); }
 
 /* Стиль для карточек "Кому подходят скрипты" */
 .who-card {
@@ -112,4 +125,20 @@ h1, h2, h3, h4, h5, h6 {
 .who-card:hover {
   border-color: rgba(34, 139, 87, 0.35);
   box-shadow: 0 0 20px rgba(34, 139, 87, 0.12);
+}
+
+/* Scroll animations */
+@keyframes fadeInUpSmooth {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-on-scroll {
+  animation: fadeInUpSmooth 0.8s ease-out forwards;
 }

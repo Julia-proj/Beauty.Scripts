@@ -235,11 +235,10 @@ export default function App() {
       </header>
 
       <section className="relative min-h-[88vh] flex items-center pt-24 hero-bg">
-        <div className="absolute inset-0 bg-black/22"></div>
-        <div className="absolute inset-0 lg:hidden bg-gradient-to-b from-white/60 via-white/30 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50 lg:to-transparent lg:bg-black/22"></div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="max-w-2xl">
-            <h1 className="js-heading text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-4 sm:mb-5" style={{color: '#0B0B0C', textShadow: '0 1px 2px rgba(0,0,0,0.1)'}}>
+            <h1 className="js-heading text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-4 sm:mb-5" style={{color: '#0B0B0C', textShadow: '0 2px 4px rgba(0,0,0,0.15)'}}>
               Скрипты, которые превращают <span className="text-blue-600">сообщения в деньги</span>
             </h1>
 
@@ -250,7 +249,7 @@ export default function App() {
             </div>
 
             <p className="text-sm sm:text-base lg:text-lg text-gray-700 mb-6 sm:mb-8 leading-relaxed">
-              <span className="font-medium">Результат:</span> закрытые возражения, увеличенный средний чек, экономия времени
+              <span className="font-medium italic">Результат:</span> закрытые возражения, увеличенный средний чек, экономия времени
             </p>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4">
@@ -280,7 +279,7 @@ export default function App() {
           .hero-bg{
             background-image: url('/images/IMG_6243.png');
             background-size: cover;
-            background-position: 65% center;
+            background-position: 70% 40%;
           }
           @media (min-width: 1024px){
             .hero-bg{
@@ -382,7 +381,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
             <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
-              Почему это <span className="text-blue-600">важно</span>
+              Почему это <span className="text-rose-700">важно</span>
             </h2>
             <p className="mt-2 sm:mt-3 text-sm sm:text-base text-gray-600 reveal-up" style={{animationDelay:"120ms"}}>
               Каждая потерянная заявка — это упущенная прибыль
@@ -434,7 +433,7 @@ export default function App() {
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
-            Кому подходят <span className="text-blue-600">скрипты</span>
+            Кому подходят <span className="text-emerald-700">скрипты</span>
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mt-6 sm:mt-8">
@@ -531,7 +530,7 @@ export default function App() {
               },
             ].map((item, k) => (
               <div key={k} className="rounded-xl sm:rounded-2xl border p-3 sm:p-4 lg:p-5 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 reveal-up" style={{animationDelay:`${k*80}ms`}}>
-                <img src={item.img} alt="" className="w-8 h-8 sm:w-10 sm:h-10 object-contain mb-2 sm:mb-3" loading="lazy" />
+                <img src={item.img} alt="" className="w-10 h-10 sm:w-12 sm:h-12 object-contain mb-2 sm:mb-3" loading="lazy" />
                 <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-900">{item.title}</h3>
                 <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">
                   <HighlightedDesc
@@ -582,7 +581,7 @@ export default function App() {
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
-            <span className="text-blue-600">Что изменится сразу</span>
+            <span className="text-teal-700">Что изменится сразу</span>
           </h2>
 
           <div className="space-y-4 sm:space-y-5 mt-6 sm:mt-8">
@@ -605,7 +604,7 @@ export default function App() {
         </div>
       </section>
 
-      <section id="reviews" className="relative py-12 sm:py-14 lg:py-16 bg-gray-50">
+      <section id="reviews" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-gray-50/80 via-blue-50/20 to-gray-50/80">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-8 sm:mb-10">
@@ -664,7 +663,7 @@ export default function App() {
                   </div>
                   
                   <div className="flex items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                    <span className="text-gray-400 line-through text-xl sm:text-2xl">67€</span>
+                    <span className="text-gray-400 line-through text-xl sm:text-2xl">127€</span>
                     <span className="text-4xl sm:text-5xl font-extrabold text-white">19€</span>
                   </div>
 
