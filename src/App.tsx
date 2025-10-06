@@ -153,7 +153,7 @@ function HighlightedDesc({
 
 export default function App() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [viewersCount, setViewersCount] = useState(8);
+  const [viewersCount, setViewersCount] = useState(() => Math.floor(8 + Math.random() * 28)); // 8–35 старт
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState("");
   const [lightboxReviewNumber, setLightboxReviewNumber] = useState(1);
@@ -162,15 +162,21 @@ export default function App() {
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
   const { h, m, s, finished } = useCountdown(12);
 
+  // Реалистичное обновление "онлайн": каждые 5–15 сек, ±1–3, клэмп 8–35
   useEffect(() => {
-    const interval = setInterval(() => {
+    let timer: any;
+    const tick = () => {
       setViewersCount(prev => {
-        const change = Math.random() > 0.5 ? 1 : -1;
-        const newCount = prev + change;
-        return Math.max(4, Math.min(15, newCount));
+        const delta = (Math.floor(Math.random() * 3) + 1) * (Math.random() > 0.5 ? 1 : -1);
+        let next = prev + delta;
+        if (next < 8) next = 8;
+        if (next > 35) next = 35;
+        return next;
       });
-    }, 12000 + Math.random() * 8000);
-    return () => clearInterval(interval);
+      timer = setTimeout(tick, 5000 + Math.random() * 10000);
+    };
+    timer = setTimeout(tick, 5000 + Math.random() * 10000);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -213,7 +219,10 @@ export default function App() {
       <ScrollProgress />
 
       <div className="fixed bottom-6 left-6 z-40 hidden lg:block">
-        <div className="flex items-center gap-2 text-sm text-gray-600 bg-white/90 backdrop-blur-md px-4 py-3 rounded-full shadow-lg border border-gray-200">
+        <div
+          className="flex items-center gap-2 text-sm text-gray-600 bg-white/90 backdrop-blur-md px-4 py-3 rounded-full shadow-lg border border-gray-200"
+          title="За последние 15 минут"
+        >
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
           <span className="font-medium">{viewersCount} онлайн</span>
         </div>
@@ -234,11 +243,15 @@ export default function App() {
         </div>
       </header>
 
-      <section className="relative min-h-[88vh] flex items-center pt-24 hero-bg">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50 lg:to-transparent lg:bg-black/22"></div>
+      {/* HERO — светлее, нижний градиент; мобайл — сдвиг вправо/вниз */}
+      <section className="relative min-h-[88vh] flex items-center pt-24 hero-bg border-t border-gray-100">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
-          <div className="max-w-2xl">
-            <h1 className="js-heading text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-4 sm:mb-5" style={{color: '#0B0B0C', textShadow: '0 2px 4px rgba(0,0,0,0.15)'}}>
+          <div className="max-w-2xl bg-white/0">
+            <h1
+              className="js-heading text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-4 sm:mb-5"
+              style={{ color: '#0B0B0C', textShadow: '0 1px 3px rgba(0,0,0,0.12)' }}
+            >
               Скрипты, которые превращают <span className="text-blue-600">сообщения в деньги</span>
             </h1>
 
@@ -279,7 +292,7 @@ export default function App() {
           .hero-bg{
             background-image: url('/images/IMG_6243.png');
             background-size: cover;
-            background-position: 70% 40%;
+            background-position: 80% 60%;
           }
           @media (min-width: 1024px){
             .hero-bg{
@@ -308,7 +321,7 @@ export default function App() {
         `}</style>
       </section>
 
-      <section id="comparison" className="relative py-12 sm:py-14 lg:py-16 bg-gray-50">
+      <section id="comparison" className="relative py-12 sm:py-14 lg:py-16 bg-[#FAFBFC] border-t border-gray-100">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-2">
@@ -376,7 +389,7 @@ export default function App() {
         </div>
       </section>
 
-      <section id="why" className="relative py-12 sm:py-14 lg:py-16 bg-white">
+      <section id="why" className="relative py-12 sm:py-14 lg:py-16 bg-white border-t border-gray-100">
         <SectionMarker n="02" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
@@ -429,7 +442,7 @@ export default function App() {
         </div>
       </section>
 
-      <section id="for" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-emerald-50/30 via-teal-50/30 to-cyan-50/30">
+      <section id="for" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-emerald-50/30 via-teal-50/30 to-cyan-50/30 border-t border-gray-100">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
@@ -480,7 +493,7 @@ export default function App() {
         </div>
       </section>
 
-      <section id="whats-included" className="relative py-12 sm:py-14 lg:py-16 bg-white">
+      <section id="whats-included" className="relative py-12 sm:py-14 lg:py-16 bg-white border-t border-gray-100">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
@@ -545,14 +558,17 @@ export default function App() {
         </div>
       </section>
 
-      <section id="bonuses" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-blue-50/30 via-rose-50/25 to-amber-50/30 overflow-hidden">
+      {/* БОНУСЫ — лавандово-пудровый фон, тонкие рамки и мягкая тень карточек */}
+      <section id="bonuses" className="relative py-12 sm:py-14 lg:py-16 bg-[#E4E0F8] overflow-hidden border-t border-gray-100">
         <SectionMarker n="05" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
           <div className="text-center">
             <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
-              <span className="text-blue-600">Бонусы</span> при покупке
+              <span className="text-[#4D455C]">Бонусы</span> при покупке
             </h2>
-            <p className="mt-2 sm:mt-3 text-sm sm:text-base text-gray-600 reveal-up" style={{animationDelay:"120ms"}}>Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами</p>
+            <p className="mt-2 sm:mt-3 text-sm sm:text-base text-[#5A506E] reveal-up" style={{animationDelay:"120ms"}}>
+              Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mt-6 sm:mt-8">
@@ -561,12 +577,20 @@ export default function App() {
               { image: "/images/bonus2.png", title: "Чек-лист «30+ источников клиентов»", desc: "Платные и бесплатные способы → где взять заявки уже сегодня.", old: "32€" },
               { image: "/images/bonus3.png", title: "Гайд «Продажи на консультации»", desc: "5 этапов продаж → мягкий апсейл дополнительных услуг.", old: "20€" },
             ].map((b, i) => (
-              <div key={i} className="rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center bg-white shadow-sm border hover:shadow-xl hover:-translate-y-2 transition-all duration-300 reveal-up" style={{animationDelay:`${i*100}ms`}}>
+              <div
+                key={i}
+                className="rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center bg-white shadow-sm border hover:shadow-xl hover:-translate-y-2 transition-all duration-300 reveal-up"
+                style={{
+                  animationDelay:`${i*100}ms`,
+                  borderColor: "#D9D3EF",
+                  boxShadow: "0 4px 20px rgba(100,100,120,0.08)"
+                }}
+              >
                 <div className="mb-3 sm:mb-4">
                   <img src={b.image} alt={`Бонус ${i + 1}`} className="w-24 h-32 sm:w-28 sm:h-36 mx-auto object-cover rounded-lg" loading="lazy" />
                 </div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">{b.title}</h3>
-                <p className="mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">{b.desc}</p>
+                <p className="mt-2 text-xs sm:text-sm text-[#4D455C] leading-relaxed">{b.desc}</p>
                 <div className="mt-3 flex items-center justify-center gap-2">
                   <span className="text-sm sm:text-base font-bold text-gray-400 line-through">{b.old}</span>
                   <span className="text-base sm:text-lg font-bold text-green-600">0€</span>
@@ -577,11 +601,12 @@ export default function App() {
         </div>
       </section>
 
-      <section id="immediate" className="relative py-12 sm:py-14 lg:py-16 bg-white">
+      {/* ЧТО ИЗМЕНИТСЯ СРАЗУ — капслок, кернинг, градиентная линия и лёгкое свечение */}
+      <section id="immediate" className="relative py-12 sm:py-14 lg:py-16 bg-white border-t border-gray-100">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
-            <span className="text-teal-700">Что изменится сразу</span>
+          <h2 className="js-heading immediate-title text-center text-gray-900">
+            ЧТО ИЗМЕНИТСЯ СРАЗУ
           </h2>
 
           <div className="space-y-4 sm:space-y-5 mt-6 sm:mt-8">
@@ -602,9 +627,32 @@ export default function App() {
             ))}
           </div>
         </div>
+
+        <style jsx>{`
+          .immediate-title{
+            font-size: clamp(1.5rem, 2.2vw + 1rem, 2.5rem);
+            font-weight: 500; /* не heavy */
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            text-shadow: 0 0 10px rgba(150, 200, 255, 0.25);
+          }
+          .immediate-title::after{
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -10px;
+            width: 140px;
+            height: 2px;
+            background: linear-gradient(90deg, #B9C0FF 0%, #A4E0D9 100%);
+            border-radius: 999px;
+          }
+        `}</style>
       </section>
 
-      <section id="reviews" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-gray-50/80 via-blue-50/20 to-gray-50/80">
+      <section id="reviews" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-gray-50/80 via-blue-50/20 to-gray-50/80 border-t border-gray-100">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-8 sm:mb-10">
@@ -625,6 +673,7 @@ export default function App() {
             ))}
           </div>
 
+          {/* Рилсы: сохраняем компактность, фиксируем 9:16 и не даём iframe растянуться неадекватно */}
           <div className="flex gap-3 sm:gap-4 justify-center items-start mb-8 overflow-x-auto pb-2 reels-row">
             {INSTAGRAM_REELS.map((url, idx) => (
               <div
@@ -639,7 +688,7 @@ export default function App() {
         </div>
       </section>
 
-      <section id="offer" className="relative py-12 sm:py-14 lg:py-16 bg-white">
+      <section id="offer" className="relative py-12 sm:py-14 lg:py-16 bg-white border-t border-gray-100">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-8 sm:mb-10">
@@ -731,7 +780,7 @@ export default function App() {
         </div>
       </section>
 
-      <section id="faq" className="relative py-12 sm:py-14 lg:py-16 bg-white">
+      <section id="faq" className="relative py-12 sm:py-14 lg:py-16 bg-white border-t border-gray-100">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
@@ -805,7 +854,7 @@ export default function App() {
 
         .reel-card {
           width: 180px;
-          height: 320px;
+          height: 320px; /* 9:16 ~ 0.5625 * width — ближе к компактному виду */
         }
         @media (min-width: 640px){
           .reel-card {
