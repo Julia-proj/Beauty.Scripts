@@ -261,7 +261,7 @@ export default function App() {
 
         <style jsx>{`
           .hero-bg{
-            background-image: url('/images/IMG_6243.png');
+            background-image: url('/images/IMG_6243.jpeg');
             /* «отдаляю» человека на десктопе: уменьшаем размер,
                двигаем изображение вправо, чтобы слева было больше пустоты под текст */
             background-repeat: no-repeat;
