@@ -69,7 +69,7 @@ function SectionMarker({ n }: { n: string }) {
 function ReviewLightbox({ isOpen, onClose, imageSrc, reviewNumber }) {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
       <div className="max-w-2xl max-h-[90vh] relative" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={onClose}
@@ -93,13 +93,13 @@ function ScrollProgress() {
       const scrolled = (scrollPx / winHeightPx) * 100;
       setScrollProgress(scrolled);
     };
-    window.addEventListener('scroll', updateScrollProgress);
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
     updateScrollProgress();
     return () => window.removeEventListener('scroll', updateScrollProgress);
   }, []);
   return (
     <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
-      <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300" style={{ width: `${scrollProgress}%` }} />
+      <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-200" style={{ width: `${scrollProgress}%` }} />
     </div>
   );
 }
@@ -131,7 +131,7 @@ function HighlightedDesc({
 
 function CountdownPill({ finished, h, m, s }:{ finished:boolean; h:number; m:number; s:number; }) {
   return (
-    <div className="mb-4 sm:mb-6">
+    <div className="mb-4 sm:mb-5">
       <div className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-orange-600 transition-colors">
         <span className="text-white">⏰</span>
         {!finished ? (
@@ -162,35 +162,37 @@ export default function App() {
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
   const { h, m, s, finished } = useCountdown(12);
 
-  // Реалистичный «онлайн»
+  // Реалистичный счётчик онлайн
   useEffect(() => {
     const updateViewers = () => {
       setViewersCount(prev => {
         const change = Math.floor(Math.random() * 5) - 2; // -2..+2
-        const next = prev + change;
-        return Math.max(8, Math.min(18, next));
+        const newCount = prev + change;
+        return Math.max(8, Math.min(18, newCount));
       });
     };
-    const interval = setInterval(updateViewers, 8000 + Math.random() * 7000);
+    const interval = setInterval(updateViewers, 7000 + Math.random() * 6000); // 7–13с
     return () => clearInterval(interval);
   }, []);
 
-  // Sticky CTA + лёгкий mobile-parallax через background-position-Y
+  // Sticky CTA и мобильный parallax (деликатно)
   useEffect(() => {
     const hero = document.querySelector<HTMLElement>(".hero-bg");
-    const handleScroll = () => {
+    const onScroll = () => {
       const scrolled = (window.scrollY / document.documentElement.scrollHeight) * 100;
       setShowStickyCTA(scrolled > 30);
       if (hero && window.innerWidth < 768) {
-        const offset = Math.max(-12, Math.min(12, window.scrollY * 0.06));
+        const y = window.scrollY;
+        const offset = Math.max(-12, Math.min(12, y * 0.06));
         hero.style.backgroundPositionY = `calc(40% + ${offset}px)`;
       }
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Заголовки входят мягко
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("head-in"); }),
@@ -208,6 +210,22 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* глобальные утилиты */}
+      <style jsx global>{`
+        .glass-btn{
+          background: rgba(15,23,42,0.85);
+          color: #fff;
+          border: 1px solid rgba(255,255,255,.18);
+          backdrop-filter: saturate(120%) blur(8px);
+          -webkit-backdrop-filter: saturate(120%) blur(8px);
+          transition: all 0.3s ease;
+        }
+        .glass-btn:hover{
+          transform: translateY(-2px);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+      `}</style>
+
       <ReviewLightbox
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
@@ -244,15 +262,15 @@ export default function App() {
 
       {/* HERO */}
       <section className="relative min-h-[88vh] flex items-center pt-24 hero-bg">
+        {/* деликатная осветляющая вуаль слева, чтобы текст читался */}
         <div className="absolute inset-0 pointer-events-none">
-          {/* мягкая осветляющая вуаль слева -> вправо, чтобы лицо не «тонула» */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white/55 via-white/28 to-transparent md:from-white/35 md:via-white/18 md:to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-white/65 via-white/35 to-transparent md:from-white/45 md:via-white/25 md:to-transparent"></div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="max-w-2xl">
             <h1 className="js-heading text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-4 sm:mb-5 text-gray-900">
-              Скрипты, которые превращают <span className="text-blue-600">сообщения в деньги</span>
+              Скрипты, которые превращают <span className="text-blue-600 whitespace-nowrap">сообщения в деньги</span>
             </h1>
 
             <div className="result-subtitle mb-4 sm:mb-5">
@@ -314,25 +332,13 @@ export default function App() {
             height: 2px;
             background: linear-gradient(90deg, rgba(59,130,246,.5) 0%, transparent 100%);
           }
-          .glass-btn{
-            background: rgba(15,23,42,0.85);
-            color: #fff;
-            border: 1px solid rgba(255,255,255,.18);
-            backdrop-filter: saturate(120%) blur(8px);
-            -webkit-backdrop-filter: saturate(120%) blur(8px);
-            transition: all 0.3s ease;
-          }
-          .glass-btn:hover{
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-          }
           @media (max-width: 640px) {
             .result-subtitle::before { width: 50px; }
           }
         `}</style>
       </section>
 
-      {/* 01 — контраст: светло-серый градиент */}
+      {/* 01 — серо-белый контраст */}
       <section id="comparison" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-gray-50 to-white">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -397,8 +403,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 02 — светло-голубой для контраста */}
-      <section id="why" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-blue-50/30 to-white">
+      {/* 02 — голубой контраст */}
+      <section id="why" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-blue-50/35 to-white">
         <SectionMarker n="02" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
@@ -426,8 +432,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 03 — мягкий изумрудный */}
-      <section id="for" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-emerald-50/30 via-teal-50/20 to-white">
+      {/* 03 — изумрудный ключ */}
+      <section id="for" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-emerald-50/35 via-teal-50/25 to-white">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
@@ -443,7 +449,7 @@ export default function App() {
             ].map((c,i)=>(
               <div
                 key={i}
-                className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border-2 border-emerald-200/40 hover:border-emerald-300/60 hover:shadow-[0_0_15px_rgba(16,185,129,.15)] transition-all duration-300 hover:-translate-y-0.5 reveal-up"
+                className="bg-white/85 backdrop-blur-[2px] rounded-2xl p-5 border-2 border-emerald-200/40 hover:border-emerald-300/60 hover:shadow-[0_0_15px_rgba(16,185,129,.12)] transition-all duration-300 hover:-translate-y-0.5 reveal-up"
                 style={{animationDelay:`${i*80}ms`}}
               >
                 <div className="flex items-center gap-3">
@@ -457,8 +463,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 04 — лёгкий серый для отделения */}
-      <section id="whats-included" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-slate-50/50 to-white">
+      {/* 04 — светлый сланец */}
+      <section id="whats-included" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-slate-50/60 to-white">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
@@ -498,9 +504,21 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 — бонусы: мягко-«празднично», но сдержанно */}
-      <section id="bonuses" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-purple-50/40 via-pink-50/30 to-orange-50/40 overflow-hidden">
+      {/* 05 — Бонусы с сдержанной анимацией */}
+      <section id="bonuses" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-purple-50/45 via-pink-50/30 to-orange-50/45 overflow-hidden">
         <SectionMarker n="05" />
+
+        {/* Стильная конфетти-анимация (малый объём, низкая отвлекаемость) */}
+        <div className="confetti-container">
+          {[...Array(14)].map((_, i) => (
+            <div key={i} className="confetti" style={{
+              left: `${(i * 7) % 100}%`,
+              animationDelay: `${(i % 5) * 0.6}s`,
+              animationDuration: `${3.2 + (i % 4) * 0.5}s`
+            }} />
+          ))}
+        </div>
+
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
           <div className="text-center">
             <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
@@ -531,15 +549,34 @@ export default function App() {
             ))}
           </div>
         </div>
+
+        <style jsx>{`
+          .confetti-container {
+            position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+          }
+          .confetti {
+            position: absolute; top: -40px;
+            width: 8px; height: 8px; opacity: 0.85;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            animation: confetti-fall linear infinite;
+            border-radius: 2px;
+          }
+          .confetti:nth-child(3n) { background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%); }
+          .confetti:nth-child(4n) { background: linear-gradient(45deg, #43e97b 0%, #38f9d7 100%); }
+          @keyframes confetti-fall {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
+          }
+        `}</style>
       </section>
 
-      {/* 06 — подчёркнутый заголовок + чуть больше контраста в карточках */}
-      <section id="immediate" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-gray-50/50 to-white">
+      {/* 06 — заголовок по центру + подчёркивание, карточки на мягком градиенте */}
+      <section id="immediate" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-gray-50/45 to-white">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="js-heading relative inline-block mx-auto text-center text-2xl sm:text-3xl lg:text-[1.9rem] font-bold text-gray-900">
+          <h2 className="js-heading text-center text-2xl sm:text-3xl lg:text-[1.9rem] font-bold text-gray-900 relative inline-block w-full">
             <span className="text-teal-700">Что изменится сразу</span>
-            <span className="block mx-auto mt-3 h-[2px] w-24 bg-gradient-to-r from-teal-600 via-sky-600 to-teal-600 rounded-full" />
+            <span className="block mx-auto mt-3 w-20 h-[2px] bg-gradient-to-r from-teal-600 via-teal-500 to-sky-600 rounded-full"></span>
           </h2>
 
           <div className="space-y-4 sm:space-y-5 mt-6 sm:mt-8">
@@ -549,7 +586,7 @@ export default function App() {
               "Повысишь средний чек через правильные предложения.",
               "Станешь увереннее — на всё есть готовый ответ.",
             ].map((t, i) => (
-              <div key={i} className="flex items-start gap-4 bg-gradient-to-r from-gray-50 to-white p-5 rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-300 reveal-up" style={{animationDelay:`${i*80}ms`}}>
+              <div key={i} className="flex items-start gap-4 bg-gradient-to-r from-gray-50 to-white p-5 rounded-2xl hover:shadow-lg transition-all duration-300 hover:-translate-y-1 reveal-up" style={{animationDelay:`${i*80}ms`}}>
                 <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 </div>
@@ -560,63 +597,67 @@ export default function App() {
         </div>
       </section>
 
-      {/* 07 — отзывы компактнее на мобиле + reels с главным первым */}
-      <section id="reviews" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-blue-50/20 to-white">
+      {/* 07 — Отзывы (компактно, без тёмных рамок) + рилсы, где первый — главный */}
+      <section id="reviews" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-blue-50/25 to-white">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-8 sm:mb-10">
             Отзывы клиентов
           </h2>
 
-          {/* Компактные карточки-«телефоны» */}
+          {/* компактные карточки отзывов, без тёмных рамок */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-10">
             {[1,2,3,4].map((n)=>(
               <div key={n} className="group cursor-pointer reveal-up" style={{animationDelay:`${n*60}ms`}} onClick={() => openLightbox(`/images/reviews/review${n}.png`, n)}>
-                <div className="phone-frame">
-                  <img
-                    src={`/images/reviews/review${n}.png`}
-                    alt={`Отзыв ${n}`}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                  <div className="notch" />
-                </div>
+                <img
+                  src={`/images/reviews/review${n}.png`}
+                  alt={`Отзыв ${n}`}
+                  className="w-full aspect-[9/16] object-cover rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 group-hover:scale-[1.02]"
+                  loading="lazy"
+                />
               </div>
             ))}
           </div>
 
-          {/* Reels: первое — главное (крупнее/первее) */}
-          <div className="flex gap-3 sm:gap-4 justify-center items-start mb-8 overflow-x-auto pb-2 reels-row">
+          {/* Рилсы: первый — шире и отмечен бейджем */}
+          <div className="flex gap-3 sm:gap-4 justify-start sm:justify-center items-start mb-8 overflow-x-auto pb-2 reels-row">
             {INSTAGRAM_REELS.map((url, idx) => (
               <div
                 key={url}
-                className={`reel-card rounded-xl overflow-hidden border-2 border-gray-200 shadow-md flex-shrink-0 hover:shadow-xl transition-all duration-300 ${idx===0 ? "scale-105 ring-2 ring-blue-300" : "hover:scale-[1.02]"}`}
+                className={`reel-card rounded-xl overflow-hidden border-2 border-gray-200 shadow-md flex-shrink-0 hover:shadow-xl transition-all duration-300 ${idx===0 ? "reel-featured" : "hover:scale-[1.02]"}`}
                 style={{animationDelay:`${idx*100}ms`}}
               >
-                <InstaEmbed url={url} maxWidth={idx===0 ? 280 : 240} />
+                {idx===0 && (
+                  <div className="absolute top-2 left-2 z-10 px-2 py-1 rounded-full text-[10px] font-semibold bg-black/70 text-white tracking-wide">
+                    ГЛАВНОЕ
+                  </div>
+                )}
+                <InstaEmbed url={url} maxWidth={idx===0 ? 300 : 240} />
               </div>
             ))}
           </div>
         </div>
 
         <style jsx>{`
-          .phone-frame{
-            position:relative;
-            border-radius:22px;
-            border:1px solid rgba(2,6,23,.12);
-            overflow:hidden;
-            aspect-ratio: 9/16;
-            background:#000;
-            box-shadow: 0 6px 20px rgba(2,6,23,.12);
+          .reels-row { scroll-snap-type: x mandatory; }
+          .reels-row > * { scroll-snap-align: center; }
+          .reel-card { position: relative; width: 180px; height: 320px; }
+          .reel-featured { width: 220px; height: 392px; transform: translateY(-2px); }
+          @media (min-width: 640px){
+            .reel-card { width: 220px; height: 392px; }
+            .reel-featured { width: 260px; height: 462px; }
           }
-          .notch{
-            position:absolute; top:0; left:50%; transform:translateX(-50%);
-            width:40%; height:12px; background:#000; border-bottom-left-radius:10px; border-bottom-right-radius:10px;
+          @media (min-width: 1024px){
+            .reel-card { width: 240px; height: 432px; }
+            .reel-featured { width: 300px; height: 540px; }
+          }
+          .reel-card :global(iframe) {
+            width: 100% !important; height: 100% !important; display: block; border: none;
           }
         `}</style>
       </section>
 
-      {/* 08 — оффер: «специальное…» ближе к кнопке на мобиле */}
+      {/* 08 — оффер. Подзаголовок аккуратнее на мобиле (меньше межстрочных отступов) */}
       <section id="offer" className="relative py-12 sm:py-14 lg:py-16 bg-white">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -624,6 +665,9 @@ export default function App() {
             <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900">
               Полная система со скидкой <span className="text-blue-600">70%</span>
             </h2>
+            <p className="mt-2 text-xs sm:text-sm text-gray-500 leading-snug sm:leading-normal reveal-up" style={{animationDelay:"120ms"}}>
+              Специальное предложение на этой неделе • Предложение действует ограниченное время
+            </p>
           </div>
 
           <div className="max-w-lg mx-auto">
@@ -633,15 +677,10 @@ export default function App() {
 
               <div className="relative z-10 text-center">
                 <div className="text-xs sm:text-sm uppercase tracking-wide text-gray-300 mb-3">Полный доступ</div>
-                <div className="flex items-center justify-center gap-4 mb-4 sm:mb-5">
-                  <span className="text-gray-400 line-through text-xl sm:text-2xl">127€</span>
-                  <span className="text-4xl sm:text-5xl font-extrabold text-white">19€</span>
+                <div className="flex items-center justify-center gap-4 mb-5 sm:mb-6">
+                  <span className="text-gray-400 line-through text-2xl">127€</span>
+                  <span className="text-5xl font-extrabold text-white">19€</span>
                 </div>
-
-                {/* Перенёс подзаголовок ближе к CTA на мобиле для лучшей читабельности */}
-                <p className="sm:hidden text-[11px] text-gray-300 mb-3">
-                  Специальное предложение на этой неделе • Важно: ограничено по времени
-                </p>
 
                 <CountdownPill finished={finished} h={h} m={m} s={s} />
 
@@ -649,18 +688,13 @@ export default function App() {
                   href={STRIPE_URL}
                   target="_blank"
                   rel="noopener"
-                  className="block w-full text-center rounded-xl bg-blue-500 text-white font-bold py-4 px-6 hover:bg-blue-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl mb-3 sm:mb-4 min-h-[48px]"
+                  className="block w-full text-center rounded-xl bg-blue-500 text-white font-bold py-4 px-6 hover:bg-blue-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl mb-4 min-h-[48px]"
                   aria-label="Купить полную систему со скидкой 70% — 19 евро"
                 >
                   Получить со скидкой 70%
                 </a>
 
-                {/* На десктопе — традиционное место под ценой */}
-                <p className="hidden sm:block text-xs text-gray-300 mb-4">
-                  Специальное предложение на этой неделе • Предложение действует ограниченное время
-                </p>
-
-                <div className="text-xs text-gray-300 mb-6">Без скрытых платежей • Пожизненный доступ • Обновления включены</div>
+                <div className="text-xs text-gray-300 mb-5 sm:mb-6">Без скрытых платежей • Пожизненный доступ • Обновления включены</div>
 
                 <div className="text-left mb-6">
                   <h3 className="text-lg font-bold text-white mb-3 text-center">Что входит:</h3>
@@ -693,7 +727,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 09 — контрастный светло-серый */}
+      {/* 09 — FAQ: серо-белый контраст */}
       <section id="faq" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-gray-50 to-white">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -718,7 +752,7 @@ export default function App() {
                   <span className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ${openFaq === i ? "rotate-180" : ""}`}>⌄</span>
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 lg:px-8 py-5 border-top border-gray-200">
+                  <div className="px-6 lg:px-8 py-5 border-t border-gray-200">
                     <p className="text-sm lg:text-base text-gray-700 leading-relaxed">{f.a}</p>
                   </div>
                 )}
@@ -756,15 +790,6 @@ export default function App() {
 
         .reveal-up { opacity: 0; animation: fade-in 0.8s ease-out forwards; }
         .animate-slide-up { animation: slide-up 0.3s ease-out; }
-
-        .reels-row { scroll-snap-type: x mandatory; }
-        .reels-row > * { scroll-snap-align: center; }
-
-        /* Размеры reels: первое — крупнее */
-        .reel-card { width: 200px; height: 360px; }
-        @media (min-width: 640px){ .reel-card { width: 230px; height: 410px; } }
-        @media (min-width: 1024px){ .reel-card { width: 260px; height: 462px; } }
-        .reel-card :global(iframe) { width: 100% !important; height: 100% !important; display: block; border: none; }
 
         .js-heading{
           opacity: 0;
