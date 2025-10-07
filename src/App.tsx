@@ -4,11 +4,20 @@ import InstaEmbed from "./components/InstaEmbed";
 const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
 
 const INSTAGRAM_REELS: string[] = [
-  "https://www.instagram.com/reel/DJjUiEnM-A_/",
-  "https://www.instagram.com/reel/DJSHB73ogs1/",
-  "https://www.instagram.com/reel/DJmUkiNsZe1/",
-  "https://www.instagram.com/reel/DJoAXfKs6tu/",
-  "https://www.instagram.com/reel/DFX57cQobmS/"
+  "https://www.instagram.com/reel/DJjUiEnM-A_/", // 0
+  "https://www.instagram.com/reel/DJSHB73ogs1/", // 1
+  "https://www.instagram.com/reel/DJmUkiNsZe1/", // 2
+  "https://www.instagram.com/reel/DJoAXfKs6tu/", // 3
+  "https://www.instagram.com/reel/DFX57cQobmS/"  // 4
+];
+
+// меняем порядок: первое и третье местами → [2,1,0,3,4]
+const REELS_ORDERED = [
+  INSTAGRAM_REELS[2],
+  INSTAGRAM_REELS[1],
+  INSTAGRAM_REELS[0],
+  INSTAGRAM_REELS[3],
+  INSTAGRAM_REELS[4],
 ];
 
 function useCountdown(hours = 12) {
@@ -99,7 +108,7 @@ function ScrollProgress() {
   }, []);
   return (
     <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
-      <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-200" style={{ width: `${scrollProgress}%` }} />
+      <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300" style={{ width: `${scrollProgress}%` }} />
     </div>
   );
 }
@@ -131,7 +140,7 @@ function HighlightedDesc({
 
 function CountdownPill({ finished, h, m, s }:{ finished:boolean; h:number; m:number; s:number; }) {
   return (
-    <div className="mb-4 sm:mb-5">
+    <div className="mb-4 sm:mb-6">
       <div className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-orange-600 transition-colors">
         <span className="text-white">⏰</span>
         {!finished ? (
@@ -158,41 +167,44 @@ export default function App() {
   const [lightboxImage, setLightboxImage] = useState("");
   const [lightboxReviewNumber, setLightboxReviewNumber] = useState(1);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
+  const [parOffset, setParOffset] = useState(0);
 
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
   const { h, m, s, finished } = useCountdown(12);
 
-  // Реалистичный счётчик онлайн
+  // реалистичный счётчик онлайн
   useEffect(() => {
     const updateViewers = () => {
       setViewersCount(prev => {
         const change = Math.floor(Math.random() * 5) - 2; // -2..+2
-        const newCount = prev + change;
-        return Math.max(8, Math.min(18, newCount));
+        const next = prev + change;
+        return Math.max(8, Math.min(18, next));
       });
     };
-    const interval = setInterval(updateViewers, 7000 + Math.random() * 6000); // 7–13с
+    const interval = setInterval(updateViewers, 7000 + Math.random() * 6000);
     return () => clearInterval(interval);
   }, []);
 
-  // Sticky CTA и мобильный parallax (деликатно)
   useEffect(() => {
-    const hero = document.querySelector<HTMLElement>(".hero-bg");
-    const onScroll = () => {
+    const handleScroll = () => {
       const scrolled = (window.scrollY / document.documentElement.scrollHeight) * 100;
       setShowStickyCTA(scrolled > 30);
-      if (hero && window.innerWidth < 768) {
-        const y = window.scrollY;
-        const offset = Math.max(-12, Math.min(12, y * 0.06));
-        hero.style.backgroundPositionY = `calc(40% + ${offset}px)`;
+      if (window.innerWidth < 768) {
+        const off = Math.min(5, window.scrollY / 220);
+        setParOffset(off);
       }
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Заголовки входят мягко
+  const openLightbox = (imageSrc: string, reviewNumber: number) => {
+    setLightboxImage(imageSrc);
+    setLightboxReviewNumber(reviewNumber);
+    setLightboxOpen(true);
+  };
+
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("head-in"); }),
@@ -202,28 +214,26 @@ export default function App() {
     return () => io.disconnect();
   }, []);
 
-  const openLightbox = (imageSrc: string, reviewNumber: number) => {
-    setLightboxImage(imageSrc);
-    setLightboxReviewNumber(reviewNumber);
-    setLightboxOpen(true);
-  };
-
   return (
     <div className="min-h-screen bg-white">
-      {/* глобальные утилиты */}
+      {/* Глобальные утилиты (noise + glass) */}
       <style jsx global>{`
+        .grain::before{
+          content:'';
+          position:absolute; inset:0; pointer-events:none;
+          opacity:.06; mix-blend-mode:multiply;
+          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0 .02 0'/></feComponentTransfer></filter><rect width='120' height='120' filter='url(%23n)'/></svg>");
+          background-size: 120px 120px;
+        }
         .glass-btn{
           background: rgba(15,23,42,0.85);
-          color: #fff;
-          border: 1px solid rgba(255,255,255,.18);
+          color:#fff; border:1px solid rgba(255,255,255,.18);
           backdrop-filter: saturate(120%) blur(8px);
           -webkit-backdrop-filter: saturate(120%) blur(8px);
-          transition: all 0.3s ease;
+          transition: all .3s ease;
         }
-        .glass-btn:hover{
-          transform: translateY(-2px);
-          box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
+        .glass-btn:hover{ transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,.15); }
+        .icon-square{ width:3rem; height:3rem; object-fit:contain; aspect-ratio:1/1; }
       `}</style>
 
       <ReviewLightbox
@@ -235,8 +245,9 @@ export default function App() {
 
       <ScrollProgress />
 
+      {/* mini-indicator (desktop) */}
       <div className="fixed bottom-6 left-6 z-40 hidden lg:block">
-        <div className="flex items-center gap-2 text-sm text-gray-600 bg-white/90 backdrop-blur-md px-4 py-3 rounded-full shadow-lg border border-gray-200 hover:scale-105 transition-transform">
+        <div className="flex items-center gap-2 text-sm text-gray-700 bg-white/90 backdrop-blur-md px-4 py-3 rounded-full shadow-lg border border-gray-200 hover:scale-105 transition-transform">
           <div className="relative">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <div className="absolute inset-0 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
@@ -245,8 +256,9 @@ export default function App() {
         </div>
       </div>
 
-      <header className="fixed top-0 left-0 right-0 bg-white/85 backdrop-blur-md z-50 border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+      {/* HEADER — компактнее и не «глухо-белый» на мобиле */}
+      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md z-50 border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3.5 flex justify-between items-center">
           <div className="text-lg sm:text-xl font-bold text-gray-900">Beauty Scripts</div>
           <a
             href={STRIPE_URL}
@@ -261,23 +273,28 @@ export default function App() {
       </header>
 
       {/* HERO */}
-      <section className="relative min-h-[88vh] flex items-center pt-24 hero-bg">
-        {/* деликатная осветляющая вуаль слева, чтобы текст читался */}
+      <section
+        className="relative min-h-[88vh] flex items-center pt-24 hero-bg"
+        style={{
+          backgroundPosition: typeof window !== 'undefined' && window.innerWidth < 768
+            ? `70% ${40 + parOffset}%`
+            : undefined
+        }}
+      >
+        {/* мягкая осветляющая вуаль слева → вправо (чтобы текст читался, лицо не скрывалось) */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-r from-white/65 via-white/35 to-transparent md:from-white/45 md:via-white/25 md:to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/35 to-transparent md:from-white/45 md:via-white/20 md:to-transparent"></div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="max-w-2xl">
             <h1 className="js-heading text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-4 sm:mb-5 text-gray-900">
-              Скрипты, которые превращают <span className="text-blue-600 whitespace-nowrap">сообщения в деньги</span>
+              Скрипты, которые превращают <span className="text-blue-600">сообщения в деньги</span>
             </h1>
 
             <div className="result-subtitle mb-4 sm:mb-5">
               <p className="text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-900">
-                <span className="whitespace-nowrap">Проверенная система</span>{" "}
-                <span className="whitespace-nowrap">общения с клиентами</span>{" "}
-                <span className="whitespace-nowrap">для бьюти-мастеров</span>
+                <span className="whitespace-nowrap">Проверенная система</span> <span className="whitespace-nowrap">общения с клиентами</span> <span className="whitespace-nowrap">для бьюти-мастеров</span>
               </p>
             </div>
 
@@ -309,6 +326,8 @@ export default function App() {
           </div>
         </div>
 
+        <div className="grain" />
+
         <style jsx>{`
           .hero-bg{
             background-image: url('/images/IMG_6243.png');
@@ -326,10 +345,8 @@ export default function App() {
           .result-subtitle::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 60px;
-            height: 2px;
+            top: 0; left: 0;
+            width: 60px; height: 2px;
             background: linear-gradient(90deg, rgba(59,130,246,.5) 0%, transparent 100%);
           }
           @media (max-width: 640px) {
@@ -338,9 +355,10 @@ export default function App() {
         `}</style>
       </section>
 
-      {/* 01 — серо-белый контраст */}
-      <section id="comparison" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-gray-50 to-white">
+      {/* 01 — серо-белый градиент + noise */}
+      <section id="comparison" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-gray-100/70 to-white">
         <SectionMarker n="01" />
+        <div className="grain" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-2">
             <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
@@ -403,9 +421,10 @@ export default function App() {
         </div>
       </section>
 
-      {/* 02 — голубой контраст */}
-      <section id="why" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-blue-50/35 to-white">
+      {/* 02 — голубоватый + noise */}
+      <section id="why" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-blue-50/40 to-white">
         <SectionMarker n="02" />
+        <div className="grain" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
             <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
@@ -432,9 +451,10 @@ export default function App() {
         </div>
       </section>
 
-      {/* 03 — изумрудный ключ */}
-      <section id="for" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-emerald-50/35 via-teal-50/25 to-white">
+      {/* 03 — тёплый teal + noise */}
+      <section id="for" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-emerald-50/40 via-teal-50/30 to-white">
         <SectionMarker n="03" />
+        <div className="grain" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
             Кому подходят <span className="text-emerald-700">скрипты</span>
@@ -449,7 +469,7 @@ export default function App() {
             ].map((c,i)=>(
               <div
                 key={i}
-                className="bg-white/85 backdrop-blur-[2px] rounded-2xl p-5 border-2 border-emerald-200/40 hover:border-emerald-300/60 hover:shadow-[0_0_15px_rgba(16,185,129,.12)] transition-all duration-300 hover:-translate-y-0.5 reveal-up"
+                className="bg-white/85 backdrop-blur-sm rounded-2xl p-5 border-2 border-emerald-200/40 hover:border-emerald-300/60 hover:shadow-[0_0_15px_rgba(16,185,129,.15)] transition-all duration-300 hover:-translate-y-0.5 reveal-up"
                 style={{animationDelay:`${i*80}ms`}}
               >
                 <div className="flex items-center gap-3">
@@ -463,9 +483,10 @@ export default function App() {
         </div>
       </section>
 
-      {/* 04 — светлый сланец */}
-      <section id="whats-included" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-slate-50/60 to-white">
+      {/* 04 — сероватый + noise */}
+      <section id="whats-included" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-slate-100/60 to-white">
         <SectionMarker n="04" />
+        <div className="grain" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
             <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
@@ -504,17 +525,17 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 — Бонусы с сдержанной анимацией */}
+      {/* 05 — бонусы с «праздничной» но деликатной анимацией + noise */}
       <section id="bonuses" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-purple-50/45 via-pink-50/30 to-orange-50/45 overflow-hidden">
         <SectionMarker n="05" />
-
-        {/* Стильная конфетти-анимация (малый объём, низкая отвлекаемость) */}
+        <div className="grain" />
+        {/* Конфетти — минималистично */}
         <div className="confetti-container">
           {[...Array(14)].map((_, i) => (
             <div key={i} className="confetti" style={{
-              left: `${(i * 7) % 100}%`,
-              animationDelay: `${(i % 5) * 0.6}s`,
-              animationDuration: `${3.2 + (i % 4) * 0.5}s`
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 2.5}s`,
+              animationDuration: `${3 + Math.random() * 2}s`
             }} />
           ))}
         </div>
@@ -551,32 +572,30 @@ export default function App() {
         </div>
 
         <style jsx>{`
-          .confetti-container {
-            position: absolute; inset: 0; overflow: hidden; pointer-events: none;
-          }
+          .confetti-container { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
           .confetti {
-            position: absolute; top: -40px;
-            width: 8px; height: 8px; opacity: 0.85;
+            position:absolute; width:10px; height:10px;
             background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-            animation: confetti-fall linear infinite;
-            border-radius: 2px;
+            opacity:0; animation: confetti-fall linear infinite;
           }
-          .confetti:nth-child(3n) { background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%); }
-          .confetti:nth-child(4n) { background: linear-gradient(45deg, #43e97b 0%, #38f9d7 100%); }
+          .confetti:nth-child(2n){ background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%); }
+          .confetti:nth-child(3n){ background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%); }
+          .confetti:nth-child(4n){ background: linear-gradient(45deg, #43e97b 0%, #38f9d7 100%); }
           @keyframes confetti-fall {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(110vh) rotate(360deg); }
+            0% { transform: translateY(-100px) rotate(0deg); opacity:.9; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity:0; }
           }
         `}</style>
       </section>
 
-      {/* 06 — заголовок по центру + подчёркивание, карточки на мягком градиенте */}
-      <section id="immediate" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-gray-50/45 to-white">
+      {/* 06 — «Что изменится сразу» — аккуратное подчёркивание и центр */}
+      <section id="immediate" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-gray-50/60 to-white">
         <SectionMarker n="06" />
+        <div className="grain" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="js-heading text-center text-2xl sm:text-3xl lg:text-[1.9rem] font-bold text-gray-900 relative inline-block w-full">
+          <h2 className="js-heading relative text-center text-2xl sm:text-3xl lg:text-[1.9rem] font-bold text-gray-900 inline-block mx-auto">
             <span className="text-teal-700">Что изменится сразу</span>
-            <span className="block mx-auto mt-3 w-20 h-[2px] bg-gradient-to-r from-teal-600 via-teal-500 to-sky-600 rounded-full"></span>
+            <span className="block mx-auto mt-2 h-[2px] w-24 bg-gradient-to-r from-teal-600/70 via-teal-500/50 to-transparent rounded-full" />
           </h2>
 
           <div className="space-y-4 sm:space-y-5 mt-6 sm:mt-8">
@@ -597,42 +616,41 @@ export default function App() {
         </div>
       </section>
 
-      {/* 07 — Отзывы (компактно, без тёмных рамок) + рилсы, где первый — главный */}
+      {/* 07 — отзывы: компактнее на мобиле, без тёмных рамок; Reels — первый крупнее */}
       <section id="reviews" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-blue-50/25 to-white">
         <SectionMarker n="07" />
+        <div className="grain" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-8 sm:mb-10">
             Отзывы клиентов
           </h2>
 
-          {/* компактные карточки отзывов, без тёмных рамок */}
+          {/* фото-отзывы — компактнее на мобайле, без тёмных рамок */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-10">
-            {[1,2,3,4].map((n)=>(
-              <div key={n} className="group cursor-pointer reveal-up" style={{animationDelay:`${n*60}ms`}} onClick={() => openLightbox(`/images/reviews/review${n}.png`, n)}>
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="group cursor-pointer reveal-up" style={{animationDelay:`${n*60}ms`}}>
                 <img
                   src={`/images/reviews/review${n}.png`}
                   alt={`Отзыв ${n}`}
-                  className="w-full aspect-[9/16] object-cover rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 group-hover:scale-[1.02]"
+                  className="w-full h-40 sm:h-56 lg:h-64 object-cover rounded-xl border border-gray-200 hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]"
+                  onClick={() => openLightbox(`/images/reviews/review${n}.png`, n)}
                   loading="lazy"
                 />
               </div>
             ))}
           </div>
 
-          {/* Рилсы: первый — шире и отмечен бейджем */}
-          <div className="flex gap-3 sm:gap-4 justify-start sm:justify-center items-start mb-8 overflow-x-auto pb-2 reels-row">
-            {INSTAGRAM_REELS.map((url, idx) => (
+          {/* Reels — первое видео главнее + порядок 3,2,1,4,5 */}
+          <div className="flex gap-3 sm:gap-4 justify-center items-start mb-8 overflow-x-auto pb-2 reels-row">
+            {REELS_ORDERED.map((url, idx) => (
               <div
                 key={url}
-                className={`reel-card rounded-xl overflow-hidden border-2 border-gray-200 shadow-md flex-shrink-0 hover:shadow-xl transition-all duration-300 ${idx===0 ? "reel-featured" : "hover:scale-[1.02]"}`}
+                className={`reel-card rounded-xl overflow-hidden border-2 border-gray-200 shadow-md flex-shrink-0 hover:shadow-xl transition-all duration-300 ${
+                  idx === 0 ? "reel-main hover:scale-[1.03]" : "hover:scale-[1.02]"
+                }`}
                 style={{animationDelay:`${idx*100}ms`}}
               >
-                {idx===0 && (
-                  <div className="absolute top-2 left-2 z-10 px-2 py-1 rounded-full text-[10px] font-semibold bg-black/70 text-white tracking-wide">
-                    ГЛАВНОЕ
-                  </div>
-                )}
-                <InstaEmbed url={url} maxWidth={idx===0 ? 300 : 240} />
+                <InstaEmbed url={url} maxWidth={idx === 0 ? 300 : 240} />
               </div>
             ))}
           </div>
@@ -641,15 +659,15 @@ export default function App() {
         <style jsx>{`
           .reels-row { scroll-snap-type: x mandatory; }
           .reels-row > * { scroll-snap-align: center; }
-          .reel-card { position: relative; width: 180px; height: 320px; }
-          .reel-featured { width: 220px; height: 392px; transform: translateY(-2px); }
+          .reel-card { width: 180px; height: 320px; }
+          .reel-card.reel-main { width: 220px; height: 380px; }
           @media (min-width: 640px){
-            .reel-card { width: 220px; height: 392px; }
-            .reel-featured { width: 260px; height: 462px; }
+            .reel-card { width: 210px; height: 370px; }
+            .reel-card.reel-main { width: 260px; height: 450px; }
           }
           @media (min-width: 1024px){
-            .reel-card { width: 240px; height: 432px; }
-            .reel-featured { width: 300px; height: 540px; }
+            .reel-card { width: 240px; height: 420px; }
+            .reel-card.reel-main { width: 300px; height: 520px; }
           }
           .reel-card :global(iframe) {
             width: 100% !important; height: 100% !important; display: block; border: none;
@@ -657,29 +675,31 @@ export default function App() {
         `}</style>
       </section>
 
-      {/* 08 — оффер. Подзаголовок аккуратнее на мобиле (меньше межстрочных отступов) */}
-      <section id="offer" className="relative py-12 sm:py-14 lg:py-16 bg-white">
+      {/* 08 — оффер: меняем 70% → 85%, «Специальное…» расположено компактнее и читаемее на мобиле */}
+      <section id="offer" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-gray-100/60 to-white">
         <SectionMarker n="08" />
+        <div className="grain" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-6 sm:mb-8">
             <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900">
-              Полная система со скидкой <span className="text-blue-600">70%</span>
+              Полная система со скидкой <span className="text-blue-600">85%</span>
             </h2>
-            <p className="mt-2 text-xs sm:text-sm text-gray-500 leading-snug sm:leading-normal reveal-up" style={{animationDelay:"120ms"}}>
+            <p className="mt-2 text-[12px] sm:text-sm text-gray-600 reveal-up" style={{animationDelay:"120ms"}}>
               Специальное предложение на этой неделе • Предложение действует ограниченное время
             </p>
           </div>
 
           <div className="max-w-lg mx-auto">
-            <div className="rounded-3xl p-8 bg-slate-800/95 text-white shadow-2xl relative overflow-hidden hover:shadow-3xl transition-all duration-300 hover:scale-[1.01] reveal-up">
+            <div className="rounded-3xl p-6 sm:p-8 bg-slate-800/95 text-white shadow-2xl relative overflow-hidden hover:shadow-3xl transition-all duration-300 hover:scale-[1.01] reveal-up">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -translate-y-16 translate-x-16" />
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-rose-400/10 rounded-full translate-y-12 -translate-x-12" />
 
               <div className="relative z-10 text-center">
-                <div className="text-xs sm:text-sm uppercase tracking-wide text-gray-300 mb-3">Полный доступ</div>
-                <div className="flex items-center justify-center gap-4 mb-5 sm:mb-6">
-                  <span className="text-gray-400 line-through text-2xl">127€</span>
-                  <span className="text-5xl font-extrabold text-white">19€</span>
+                <div className="text-[11px] sm:text-sm uppercase tracking-wide text-gray-300 mb-3">Полный доступ</div>
+
+                <div className="flex items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                  <span className="text-gray-400 line-through text-xl sm:text-2xl">127€</span>
+                  <span className="text-4xl sm:text-5xl font-extrabold text-white">19€</span>
                 </div>
 
                 <CountdownPill finished={finished} h={h} m={m} s={s} />
@@ -688,17 +708,19 @@ export default function App() {
                   href={STRIPE_URL}
                   target="_blank"
                   rel="noopener"
-                  className="block w-full text-center rounded-xl bg-blue-500 text-white font-bold py-4 px-6 hover:bg-blue-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl mb-4 min-h-[48px]"
-                  aria-label="Купить полную систему со скидкой 70% — 19 евро"
+                  className="block w-full text-center rounded-xl bg-blue-500 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 hover:bg-blue-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl mb-3 sm:mb-4 min-h-[48px]"
+                  aria-label="Купить полную систему со скидкой 85% — 19 евро"
                 >
-                  Получить со скидкой 70%
+                  Получить со скидкой 85%
                 </a>
 
-                <div className="text-xs text-gray-300 mb-5 sm:mb-6">Без скрытых платежей • Пожизненный доступ • Обновления включены</div>
+                <div className="text-[12px] sm:text-xs text-gray-300 mb-5 sm:mb-6">
+                  Без скрытых платежей • Пожизненный доступ • Обновления включены
+                </div>
 
-                <div className="text-left mb-6">
-                  <h3 className="text-lg font-bold text-white mb-3 text-center">Что входит:</h3>
-                  <ul className="space-y-2 text-sm text-gray-200">
+                <div className="text-left mb-5 sm:mb-6">
+                  <h3 className="text-base sm:text-lg font-bold text-white mb-2 sm:mb-3 text-center">Что входит:</h3>
+                  <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-200">
                     {[
                       "Готовые диалоги для всех ситуаций",
                       "Шаблоны под конкретную услугу",
@@ -715,7 +737,7 @@ export default function App() {
                   </ul>
                 </div>
 
-                <div className="flex items-center justify-center gap-2 text-xs flex-wrap">
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs flex-wrap">
                   <div className="px-2 py-1 bg-black text-white rounded">Apple Pay</div>
                   <div className="px-2 py-1 bg-white/20 text-white rounded">Google Pay</div>
                   <div className="px-2 py-1 bg-white/20 text-white rounded">Visa</div>
@@ -727,9 +749,10 @@ export default function App() {
         </div>
       </section>
 
-      {/* 09 — FAQ: серо-белый контраст */}
-      <section id="faq" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-gray-50 to-white">
+      {/* 09 — FAQ — серо-белый + noise */}
+      <section id="faq" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-gray-100/70 to-white">
         <SectionMarker n="09" />
+        <div className="grain" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
             Частые вопросы
@@ -790,17 +813,13 @@ export default function App() {
 
         .reveal-up { opacity: 0; animation: fade-in 0.8s ease-out forwards; }
         .animate-slide-up { animation: slide-up 0.3s ease-out; }
-
         .js-heading{
           opacity: 0;
           transform: translateY(14px);
           transition: opacity .7s ease, transform .7s ease;
           will-change: opacity, transform;
         }
-        .js-heading.head-in{
-          opacity: 1;
-          transform: translateY(0);
-        }
+        .js-heading.head-in{ opacity: 1; transform: translateY(0); }
       `}</style>
     </div>
   );
