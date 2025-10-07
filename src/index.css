@@ -4,18 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --ink: #111827;
-  --muted: #6B7280;
-  --lavender: #7C8CF7;
-  --lavender-deep: #6E75D8;
-  --bg-0: #FFFFFF;
-  --bg-1: #FAFAFD;
-  --bg-2: #F7F7FB;
-  --bg-3: #F9FAFF;
-  --line: rgba(17, 24, 39, 0.06);
-}
-
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
@@ -25,7 +13,7 @@ html {
 body {
   font-family: 'Inter', sans-serif;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-  background: var(--bg-0);
+  background: linear-gradient(135deg, #fefefe 0%, #f9fafb 50%, #fefefe 100%);
   line-height: 1.6;
 }
 
@@ -153,44 +141,4 @@ h1, h2, h3, h4, h5, h6 {
 
 .animate-on-scroll {
   animation: fadeInUpSmooth 0.8s ease-out forwards;
-}
-
-/* Badge styles */
-.badge-result {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.625rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(124, 140, 247, 0.35);
-  background: rgba(124, 140, 247, 0.12);
-  color: #6E75D8;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.badge-section {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.3rem 0.75rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(124, 140, 247, 0.35);
-  background: rgba(124, 140, 247, 0.12);
-  color: #6E75D8;
-  font-size: 0.625rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-/* Progress bar */
-#progress-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 2px;
-  background: var(--lavender);
-  width: 0;
-  z-index: 100;
-  transition: width 0.1s ease-out;
 }
