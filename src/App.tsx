@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import InstaEmbed from "./components/InstaEmbed";
 
 const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
 
-// Поменяла местами 1↔3: теперь третье — главное (идёт первым)
+// Рилсы: меняем порядок так, чтобы 3-е стало главным (идёт первым),
+// а 1-е и 3-е — поменялись местами: итоговый порядок [3,2,1,4,5]
 const INSTAGRAM_REELS: string[] = [
-  "https://www.instagram.com/reel/DJmUkiNsZe1/", // бывшее 3-е — теперь главное
-  "https://www.instagram.com/reel/DJSHB73ogs1/", // прежнее 2-е
-  "https://www.instagram.com/reel/DJjUiEnM-A_/", // прежнее 1-е
+  "https://www.instagram.com/reel/DJmUkiNsZe1/", // было 3-е — теперь главное
+  "https://www.instagram.com/reel/DJSHB73ogs1/",
+  "https://www.instagram.com/reel/DJjUiEnM-A_/",
   "https://www.instagram.com/reel/DJoAXfKs6tu/",
   "https://www.instagram.com/reel/DFX57cQobmS/"
 ];
@@ -70,7 +71,7 @@ function SectionMarker({ n }: { n: string }) {
 function ReviewLightbox({ isOpen, onClose, imageSrc, reviewNumber }) {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 bg-black/85 flex items-center justify-center z-50 p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
       <div className="max-w-2xl max-h-[90vh] relative" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={onClose}
@@ -94,7 +95,7 @@ function ScrollProgress() {
       const scrolled = (scrollPx / winHeightPx) * 100;
       setScrollProgress(scrolled);
     };
-    window.addEventListener('scroll', updateScrollProgress);
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
     updateScrollProgress();
     return () => window.removeEventListener('scroll', updateScrollProgress);
   }, []);
@@ -130,28 +131,6 @@ function HighlightedDesc({
   return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
-function CountdownPill({ finished, h, m, s }:{ finished:boolean; h:number; m:number; s:number; }) {
-  return (
-    <div className="mb-4 sm:mb-6">
-      <div className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-orange-600 transition-colors">
-        <span className="text-white">⏰</span>
-        {!finished ? (
-          <>
-            <span className="text-white text-xs sm:text-sm font-medium">До конца:</span>
-            <span className="font-bold tabular-nums text-white text-sm sm:text-base">
-              {String(h).padStart(2, "0")}:
-              {String(m).padStart(2, "0")}:
-              {String(s).padStart(2, "0")}
-            </span>
-          </>
-        ) : (
-          <span className="font-semibold text-white text-sm">Время истекло</span>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [viewersCount, setViewersCount] = useState(12);
@@ -159,31 +138,26 @@ export default function App() {
   const [lightboxImage, setLightboxImage] = useState("");
   const [lightboxReviewNumber, setLightboxReviewNumber] = useState(1);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
-  const [parOffset, setParOffset] = useState(0);
 
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
   const { h, m, s, finished } = useCountdown(12);
 
+  // более "живой" индикатор
   useEffect(() => {
-    const updateViewers = () => {
+    const id = setInterval(() => {
       setViewersCount(prev => {
         const change = Math.floor(Math.random() * 5) - 2; // -2..+2
         const next = prev + change;
         return Math.max(8, Math.min(18, next));
       });
-    };
-    const interval = setInterval(updateViewers, 8000 + Math.random() * 7000);
-    return () => clearInterval(interval);
+    }, 6000 + Math.random() * 5000);
+    return () => clearInterval(id);
   }, []);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = (window.scrollY / document.documentElement.scrollHeight) * 100;
       setShowStickyCTA(scrolled > 30);
-      if (window.innerWidth < 768) {
-        const off = Math.min(8, window.scrollY / 180); // чуть больше «параллакса» на мобиле
-        setParOffset(off);
-      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
@@ -207,28 +181,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Глобальные токены */}
-      <style jsx global>{`
-        :root{
-          --lavender: #BBAAE6;      /* пудрово-лавандовый для «Бонусов» */
-          --powder-teal: #A7D4CC;   /* мягкий холодный бирюзовый */
-          --ink-90: #0B0B0C;
-        }
-        .glass-btn{
-          background: rgba(15,23,42,0.85);
-          color: #fff;
-          border: 1px solid rgba(255,255,255,.18);
-          backdrop-filter: saturate(120%) blur(8px);
-          -webkit-backdrop-filter: saturate(120%) blur(8px);
-          transition: all 0.3s ease;
-        }
-        .glass-btn:hover{
-          transform: translateY(-2px);
-          box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-      `}</style>
-
-      <ReviewLightbox 
+      <ReviewLightbox
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
         imageSrc={lightboxImage}
@@ -238,7 +191,7 @@ export default function App() {
       <ScrollProgress />
 
       <div className="fixed bottom-6 left-6 z-40 hidden lg:block">
-        <div className="flex items-center gap-2 text-sm text-gray-600 bg-white/90 backdrop-blur-md px-4 py-3 rounded-full shadow-lg border border-gray-200 hover:scale-105 transition-transform">
+        <div className="flex items-center gap-2 text-sm text-gray-700 bg-white/90 backdrop-blur-md px-4 py-3 rounded-full shadow-lg border border-gray-200 hover:scale-105 transition-transform">
           <div className="relative">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <div className="absolute inset-0 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
@@ -254,7 +207,7 @@ export default function App() {
             href={STRIPE_URL}
             target="_blank"
             rel="noopener"
-            className="glass-btn px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium min-h-[44px] flex items-center justify-center"
+            className="px-4 sm:px-6 py-2 sm:py-2.5 bg-gray-900 text-white rounded-lg text-sm sm:text-base font-medium hover:bg-gray-800 transition-all hover:scale-105 transform hover:shadow-lg min-h-[44px] flex items-center justify-center"
             aria-label="Купить скрипты"
           >
             Купить
@@ -262,19 +215,10 @@ export default function App() {
         </div>
       </header>
 
-      {/* HERO — «отдалённый» кадр, больше пустоты справа */}
-      <section
-        className="relative min-h-[88vh] flex items-center pt-24 hero-bg"
-        style={{
-          backgroundPosition: typeof window !== "undefined" && window.innerWidth < 768
-            ? `75% ${40 + parOffset}%` // чуть правее + параллакс на мобиле
-            : undefined
-        }}
-      >
-        {/* Мягкая вуаль слева→вправо, чтобы текст читался, не перекрывая лицо */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-r from-white/75 via-white/40 to-transparent md:from-white/55 md:via-white/25 md:to-transparent"></div>
-        </div>
+      {/* HERO — человек «дальше», пустота слева, лицо не перекрывается */}
+      <section className="relative min-h-[88vh] flex items-center pt-24 hero-bg">
+        {/* деликатный верхний градиент для читаемости */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/65 via-white/35 to-transparent md:from-white/45 md:via-white/25 md:to-transparent pointer-events-none"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="max-w-2xl">
@@ -284,15 +228,12 @@ export default function App() {
 
             <div className="result-subtitle mb-4 sm:mb-5">
               <p className="text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-900">
-                <span className="whitespace-nowrap">Проверенная система</span>{" "}
-                <span className="whitespace-nowrap">общения с клиентами</span>{" "}
-                <span className="whitespace-nowrap">для бьюти-мастеров</span>
+                Проверенная система общения с клиентами для бьюти-мастеров
               </p>
             </div>
 
             <p className="text-sm sm:text-base lg:text-lg text-gray-800 mb-6 sm:mb-8 leading-relaxed">
-              <span className="font-medium">Результат:</span>{" "}
-              закрытые возражения, увеличенный средний чек, экономия времени
+              <span className="font-medium">Результат:</span> закрытые возражения, увеличенный средний чек, экономия времени
             </p>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4">
@@ -300,7 +241,7 @@ export default function App() {
                 href={STRIPE_URL}
                 target="_blank"
                 rel="noopener"
-                className="glass-btn inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-6 lg:px-7 py-3 sm:py-3.5 lg:py-4 rounded-xl text-base sm:text-lg font-semibold min-h-[48px]"
+                className="inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-6 lg:px-7 py-3 sm:py-3.5 lg:py-4 bg-gray-900 text-white rounded-xl text-base sm:text-lg font-semibold hover:bg-gray-800 transition-all hover:-translate-y-0.5 hover:shadow-xl min-h-[48px]"
                 aria-label="Купить скрипты за 19 евро"
               >
                 Купить <span className="inline-block ml-1">→</span>
@@ -320,13 +261,26 @@ export default function App() {
 
         <style jsx>{`
           .hero-bg{
-            background-image: url('/images/IMG_6243.jpeg');
+            background-image: url('/images/IMG_6243.png');
+            /* «отдаляю» человека на десктопе: уменьшаем размер,
+               двигаем изображение вправо, чтобы слева было больше пустоты под текст */
+            background-repeat: no-repeat;
             background-size: cover;
-            background-position: right center; /* больше пустоты справа, как в оригинале */
+            background-position: right center;
           }
-          @media (max-width: 768px){
+          /* На десктопе — «зум-аут»: показываем больше кадра (человек меньше) */
+          @media (min-width:1024px){
             .hero-bg{
-              background-position: 75% 40%;
+              background-size: 90%;
+              background-position: right center;
+              background-color: #fff;
+            }
+          }
+          /* На мобиле сохраняем cover, но лицо не перекрываем (сдвиг вправо/вниз) */
+          @media (max-width: 640px){
+            .hero-bg{
+              background-size: cover;
+              background-position: 75% 48%;
             }
           }
           .result-subtitle {
@@ -337,20 +291,15 @@ export default function App() {
           .result-subtitle::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 60px;
-            height: 2px;
+            top: 0; left: 0;
+            width: 64px; height: 2px;
             background: linear-gradient(90deg, rgba(59,130,246,.5) 0%, transparent 100%);
-          }
-          @media (max-width: 640px) {
-            .result-subtitle::before { width: 50px; }
           }
         `}</style>
       </section>
 
-      {/* 01 — холодный серый градиент */}
-      <section id="comparison" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-slate-50 via-slate-50/70 to-white">
+      {/* 01 — холодный серо-голубой */}
+      <section id="comparison" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(to_bottom,#f7fafc_0%,#ffffff_60%)]">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-2">
@@ -414,8 +363,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 02 — холодный голубой слой */}
-      <section id="why" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-blue-50/40 via-blue-50/20 to-white">
+      {/* 02 — холодный серо-лавандовый градиент */}
+      <section id="why" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#f5f7ff_0%,#ffffff_70%)]">
         <SectionMarker n="02" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
@@ -434,7 +383,7 @@ export default function App() {
               {img:"/images/door.png", title:"Заявки уходят к конкуренту", text:"Пока вы думаете, клиент записывается к тем, кто отвечает быстро и уверенно."},
             ].map((c,i)=>(
               <div key={i} className="rounded-2xl border p-5 text-center bg-white hover:shadow-lg transition-all duration-300 hover:-translate-y-1 reveal-up" style={{animationDelay:`${i*80}ms`}}>
-                <img src={c.img} alt="" className="mx-auto mb-4 w-14 h-14 object-contain" loading="lazy" />
+                <img src={c.img} alt="" className="mx-auto mb-4 w-12 h-12 object-contain" loading="lazy" />
                 <h3 className="font-semibold text-base">{c.title}</h3>
                 <p className="mt-2 text-sm text-gray-600 leading-relaxed">{c.text}</p>
               </div>
@@ -443,8 +392,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 03 — мягкий бирюзовый градиент */}
-      <section id="for" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-emerald-50/30 via-teal-50/25 to-white">
+      {/* 03 — пудровый teal/изумруд */}
+      <section id="for" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#ecfbf7_0%,#ffffff_70%)]">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
@@ -460,22 +409,22 @@ export default function App() {
             ].map((c,i)=>(
               <div
                 key={i}
-                className="bg-white/85 backdrop-blur-sm rounded-2xl p-5 border-2 border-emerald-200/40 hover:border-emerald-300/60 hover:shadow-[0_0_15px_rgba(16,185,129,.15)] transition-all duration-300 hover:-translate-y-0.5 reveal-up"
+                className="bg-white/90 backdrop-blur-[1px] rounded-2xl p-5 border-2 border-emerald-200/40 hover:border-emerald-300/60 hover:shadow-[0_0_15px_rgba(16,185,129,.15)] transition-all duration-300 hover:-translate-y-0.5 reveal-up"
                 style={{animationDelay:`${i*80}ms`}}
               >
                 <div className="flex items-center gap-3">
-                  <img src={c.img} alt="" className="w-12 h-12 object-contain" loading="lazy" />
-                  <h3 className="text-lg font-bold text-gray-900">{c.title}</h3>
+                  <img src={c.img} alt="" className="w-11 h-11 object-contain" loading="lazy" />
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900">{c.title}</h3>
                 </div>
-                <p className="mt-3 text-sm text-gray-600 leading-relaxed">{c.text}</p>
+                <p className="mt-2.5 text-sm text-gray-600 leading-relaxed">{c.text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 04 — холодный серый слой */}
-      <section id="whats-included" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-slate-50/60 to-white">
+      {/* 04 — холодный серый */}
+      <section id="whats-included" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#f6f7f9_0%,#ffffff_70%)]">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
@@ -498,11 +447,11 @@ export default function App() {
                 <img
                   src={item.img}
                   alt=""
-                  className={`${item.big ? "w-14 h-14" : "w-12 h-12"} object-contain mb-3`}
+                  className={`${item.big ? "w-14 h-14" : "w-11 h-11"} object-contain mb-2.5`}
                   loading="lazy"
                 />
-                <h3 className="text-lg font-bold text-gray-900">{item.title}</h3>
-                <p className="mt-2 text-sm text-gray-600 leading-relaxed">
+                <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-900">{item.title}</h3>
+                <p className="mt-1.5 text-xs sm:text-sm text-gray-600 leading-relaxed">
                   <HighlightedDesc
                     text={item.desc}
                     primaryHighlight={item.highlight}
@@ -515,16 +464,17 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 — пудрово-лавандовый + деликатные конфетти */}
-      <section id="bonuses" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-br from-purple-50/45 via-violet-50/35 to-rose-50/35 overflow-hidden">
+      {/* 05 — бонусы с пудровым лавандовым и лёгкими конфетти */}
+      <section id="bonuses" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#f5f0ff_0%,#fff7fb_60%,#ffffff_100%)] overflow-hidden">
         <SectionMarker n="05" />
-        {/* Конфетти — очень лёгкие, редкие */}
+
+        {/* конфетти — очень деликатные */}
         <div className="confetti-container">
-          {[...Array(12)].map((_, i) => (
+          {[...Array(14)].map((_, i) => (
             <div key={i} className="confetti" style={{
               left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2.5}s`,
-              animationDuration: `${3.5 + Math.random() * 1.5}s`
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${3 + Math.random() * 2}s`
             }} />
           ))}
         </div>
@@ -532,28 +482,29 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
           <div className="text-center">
             <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
-              <span style={{color:'var(--lavender)'}}>Бонусы</span> при покупке
+              <span className="text-purple-600">Бонусы</span> при покупке
             </h2>
             <p className="mt-2 sm:mt-3 text-sm sm:text-base text-gray-600 reveal-up" style={{animationDelay:"120ms"}}>
               Суммарная ценность — 79€. Сегодня идут бесплатно со скриптами
             </p>
           </div>
 
+          {/* компактнее на мобиле, но сами обложки — крупнее */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mt-6 sm:mt-8">
             {[
               { image: "/images/bonus1.png", title: "Гайд «Работа с клиентской базой»", desc: "Повторные записи без рекламы → возвращайте старых клиентов.", old: "27€" },
               { image: "/images/bonus2.png", title: "Чек-лист «30+ источников клиентов»", desc: "Платные и бесплатные способы → где взять заявки уже сегодня.", old: "32€" },
               { image: "/images/bonus3.png", title: "Гайд «Продажи на консультации»", desc: "5 этапов продаж → мягкий апсейл дополнительных услуг.", old: "20€" },
             ].map((b, i) => (
-              <div key={i} className="rounded-2xl p-5 text-center bg-white shadow-sm border hover:shadow-xl hover:-translate-y-2 transition-all duration-300 reveal-up" style={{animationDelay:`${i*100}ms`}}>
+              <div key={i} className="rounded-2xl p-4 sm:p-5 text-center bg-white shadow-sm border hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 reveal-up" style={{animationDelay:`${i*100}ms`}}>
                 <div className="mb-3 sm:mb-4">
                   <img src={b.image} alt={`Бонус ${i + 1}`} className="w-28 h-36 sm:w-32 sm:h-40 mx-auto object-cover rounded-lg" loading="lazy" />
                 </div>
-                <h3 className="text-base font-bold text-gray-900">{b.title}</h3>
-                <p className="mt-2 text-sm text-gray-600 leading-relaxed">{b.desc}</p>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">{b.title}</h3>
+                <p className="mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">{b.desc}</p>
                 <div className="mt-3 flex items-center justify-center gap-2">
-                  <span className="text-base font-bold text-gray-400 line-through">{b.old}</span>
-                  <span className="text-lg font-bold text-green-600">0€</span>
+                  <span className="text-sm sm:text-base font-bold text-gray-400 line-through">{b.old}</span>
+                  <span className="text-base sm:text-lg font-bold text-green-600">0€</span>
                 </div>
               </div>
             ))}
@@ -561,32 +512,30 @@ export default function App() {
         </div>
 
         <style jsx>{`
-          .confetti-container {
-            position: absolute; inset: 0; pointer-events: none; overflow: hidden;
-          }
+          .confetti-container { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
           .confetti {
-            position: absolute;
-            width: 8px; height: 8px;
-            background: linear-gradient(45deg, #8b5cf6, #ec4899);
-            opacity: 0; animation: confetti-fall linear infinite;
+            position:absolute; width:8px; height:8px; opacity:0;
+            background: linear-gradient(45deg, #b197fc 0%, #a29bfe 100%);
+            animation: confetti-fall linear infinite;
             border-radius: 2px;
           }
-          .confetti:nth-child(3n) { background: linear-gradient(45deg, #60a5fa, #22d3ee); }
-          .confetti:nth-child(4n) { background: linear-gradient(45deg, #34d399, #10b981); }
+          .confetti:nth-child(2n){ background: linear-gradient(45deg,#f093fb 0%,#f5576c 100%); }
+          .confetti:nth-child(3n){ background: linear-gradient(45deg,#4facfe 0%,#00f2fe 100%); }
+          .confetti:nth-child(4n){ background: linear-gradient(45deg,#43e97b 0%,#38f9d7 100%); }
           @keyframes confetti-fall {
-            0% { transform: translateY(-80px) rotate(0deg); opacity: 0.9; }
+            0% { transform: translateY(-80px) rotate(0deg); opacity: 1; }
             100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
           }
         `}</style>
       </section>
 
-      {/* 06 — заголовок по центру, тонкое подчёркивание */}
-      <section id="immediate" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-slate-50/55 to-white">
+      {/* 06 — «Что изменится сразу» центр + тонкое подчёркивание, фон не белый сплошняком */}
+      <section id="immediate" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#eefcf8_0%,#ffffff_75%)]">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="js-heading text-center text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 relative inline-block mx-auto">
+          <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 relative inline-block mx-auto">
             <span className="text-teal-700">Что изменится сразу</span>
-            <span className="block mx-auto mt-2 h-[2px] w-24 bg-gradient-to-r from-teal-700/70 via-teal-500/70 to-sky-600/70 rounded-full"></span>
+            <span className="block mx-auto mt-2 h-[2px] w-24 bg-gradient-to-r from-teal-600 via-sky-600 to-teal-600 rounded-full"></span>
           </h2>
 
           <div className="space-y-4 sm:space-y-5 mt-6 sm:mt-8">
@@ -596,51 +545,53 @@ export default function App() {
               "Повысишь средний чек через правильные предложения.",
               "Станешь увереннее — на всё есть готовый ответ.",
             ].map((t, i) => (
-              <div key={i} className="flex items-start gap-4 bg-white/80 p-5 rounded-2xl border border-slate-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 reveal-up" style={{animationDelay:`${i*80}ms`}}>
-                <div className="w-6 h-6 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg className="w-4 h-4 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+              <div key={i} className="flex items-start gap-3 sm:gap-4 bg-white/90 p-4 sm:p-5 rounded-2xl border border-teal-50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 reveal-up" style={{animationDelay:`${i*80}ms`}}>
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 </div>
-                <span className="text-base lg:text-lg font-medium text-gray-800">{t}</span>
+                <span className="text-sm sm:text-base lg:text-lg font-medium text-gray-800">{t}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 07 — отзывы компактнее, без тёмных рамок; Reels: первый (теперь «3-й») крупнее */}
-      <section id="reviews" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-blue-50/25 via-blue-50/10 to-white">
+      {/* 07 — отзывы: компактнее на мобиле, без тёмных рамок */}
+      <section id="reviews" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#f3f7ff_0%,#ffffff_70%)]">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-8 sm:mb-10">
+          <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-6 sm:mb-8">
             Отзывы клиентов
           </h2>
 
-          {/* Фото-отзывы — более компактные на мобиле, без тёмной окантовки */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 mb-8 sm:mb-10">
-            {[1,2,3,4].map((n)=>(
-              <div key={n} className="group cursor-pointer reveal-up" style={{animationDelay:`${n*60}ms`}}>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5 sm:gap-4 mb-6 sm:mb-8">
+            {[1, 2, 3, 4].map((n) => (
+              <button
+                key={n}
+                className="group cursor-pointer reveal-up rounded-xl overflow-hidden border border-gray-200 hover:border-blue-300 transition-colors"
+                style={{animationDelay:`${n*60}ms`}}
+                onClick={() => openLightbox(`/images/reviews/review${n}.png`, n)}
+                aria-label={`Открыть отзыв ${n}`}
+              >
                 <img
                   src={`/images/reviews/review${n}.png`}
                   alt={`Отзыв ${n}`}
-                  className="w-full h-44 sm:h-56 lg:h-64 object-cover rounded-xl border border-gray-200 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
-                  onClick={() => openLightbox(`/images/reviews/review${n}.png`, n)}
+                  className="w-full h-44 sm:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-300"
                   loading="lazy"
                 />
-              </div>
+              </button>
             ))}
           </div>
 
-          {/* Reels — первый (теперь «третье» видео) крупнее, чтобы казалось «главным» */}
+          {/* Рилсы: 1↔3 поменяли, 3-е — главное (крупнее карточка слева) */}
           <div className="flex gap-3 sm:gap-4 justify-center items-start mb-8 overflow-x-auto pb-2 reels-row">
             {INSTAGRAM_REELS.map((url, idx) => (
               <div
                 key={url}
-                className={`reel-card rounded-xl overflow-hidden border-2 border-gray-200 shadow-md flex-shrink-0 hover:shadow-xl transition-all duration-300 ${
-                  idx === 0 ? "scale-105" : "hover:scale-[1.02]"
-                }`}
+                className={`reel-card ${idx===0 ? "reel-featured" : ""} rounded-xl overflow-hidden border-2 border-gray-200 shadow-md flex-shrink-0 hover:shadow-xl hover:scale-[1.02] transition-all duration-300`}
                 style={{animationDelay:`${idx*100}ms`}}
               >
-                <InstaEmbed url={url} maxWidth={idx === 0 ? 280 : 260} />
+                <InstaEmbed url={url} maxWidth={idx===0 ? 300 : 240} />
               </div>
             ))}
           </div>
@@ -649,56 +600,88 @@ export default function App() {
         <style jsx>{`
           .reels-row { scroll-snap-type: x mandatory; }
           .reels-row > * { scroll-snap-align: center; }
-          .reel-card { width: 180px; height: 320px; }
-          @media (min-width: 640px){ .reel-card { width: 220px; height: 391px; } }
-          @media (min-width: 1024px){ .reel-card { width: 260px; height: 462px; } }
-          .reel-card :global(iframe) { width: 100% !important; height: 100% !important; display: block; border: none; }
+
+          .reel-card { width: 170px; height: 300px; }
+          .reel-featured { width: 220px; height: 360px; }
+          @media (min-width: 640px){
+            .reel-card { width: 220px; height: 391px; }
+            .reel-featured { width: 280px; height: 470px; }
+          }
+          @media (min-width: 1024px){
+            .reel-card { width: 240px; height: 430px; }
+            .reel-featured { width: 310px; height: 520px; }
+          }
+          .reel-card :global(iframe) {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+            border: none;
+          }
         `}</style>
       </section>
 
-      {/* 08 — оффер: % меняем на 85%, подзаголовок расположен аккуратнее на мобиле */}
-      <section id="offer" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-slate-50/40 to-white">
+      {/* 08 — Оффер: скидка 85%, подзаголовок ближе к цене на мобиле */}
+      <section id="offer" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#ffffff_0%,#f7fafc_70%)]">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-8 sm:mb-10">
+          <div className="text-center mb-6 sm:mb-8">
             <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900">
               Полная система со скидкой <span className="text-blue-600">85%</span>
             </h2>
-            {/* Переносим «специальное…» чуть ниже и делаем бейдж на мобиле, чтобы читалось лучше */}
-            <p className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/70 border border-gray-200 text-xs sm:text-sm text-gray-600">
+            <p className="mt-2 text-xs sm:text-sm text-gray-500 reveal-up sm:mt-3" style={{animationDelay:"120ms"}}>
               Специальное предложение на этой неделе • Предложение действует ограниченное время
             </p>
           </div>
 
           <div className="max-w-lg mx-auto">
-            <div className="rounded-3xl p-8 bg-slate-800/95 text-white shadow-2xl relative overflow-hidden hover:shadow-3xl transition-all duration-300 hover:scale-[1.01] reveal-up">
+            <div className="rounded-3xl p-7 sm:p-8 bg-slate-800 text-white shadow-2xl relative overflow-hidden hover:shadow-3xl transition-all duration-300 hover:scale-[1.01] reveal-up">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -translate-y-16 translate-x-16" />
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-rose-400/10 rounded-full translate-y-12 -translate-x-12" />
 
               <div className="relative z-10 text-center">
-                <div className="text-xs sm:text-sm uppercase tracking-wide text-gray-300 mb-3">Полный доступ</div>
-                <div className="flex items-center justify-center gap-4 mb-6">
-                  <span className="text-gray-400 line-through text-2xl">127€</span>
-                  <span className="text-5xl font-extrabold text-white">19€</span>
+                <div className="text-xs sm:text-sm uppercase tracking-wide text-gray-300 mb-2 sm:mb-3">Полный доступ</div>
+
+                <div className="flex items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                  <span className="text-gray-400 line-through text-xl sm:text-2xl">127€</span>
+                  <span className="text-4xl sm:text-5xl font-extrabold text-white">19€</span>
                 </div>
 
-                <CountdownPill finished={finished} h={h} m={m} s={s} />
+                {/* таймер */}
+                <div className="mb-4 sm:mb-5">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-orange-600 transition-colors">
+                    <span className="text-white">⏰</span>
+                    {!finished ? (
+                      <>
+                        <span className="text-white text-xs sm:text-sm font-medium">До конца:</span>
+                        <span className="font-bold tabular-nums text-white text-sm sm:text-base">
+                          {String(h).padStart(2, "0")}:
+                          {String(m).padStart(2, "0")}:
+                          {String(s).padStart(2, "0")}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="font-semibold text-white text-sm">Время истекло</span>
+                    )}
+                  </div>
+                </div>
 
                 <a
                   href={STRIPE_URL}
                   target="_blank"
                   rel="noopener"
-                  className="block w-full text-center rounded-xl bg-blue-500 text-white font-bold py-4 px-6 hover:bg-blue-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl mb-4 min-h-[48px]"
+                  className="block w-full text-center rounded-xl bg-blue-500 text-white font-bold py-3.5 sm:py-4 px-4 sm:px-6 hover:bg-blue-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl mb-3 sm:mb-4 min-h-[48px]"
                   aria-label="Купить полную систему со скидкой 85% — 19 евро"
                 >
                   Получить со скидкой 85%
                 </a>
 
-                <div className="text-xs text-gray-300 mb-6">Без скрытых платежей • Пожизненный доступ • Обновления включены</div>
+                <div className="text-xs text-gray-300 mb-4 sm:mb-6">
+                  Без скрытых платежей • Пожизненный доступ • Обновления включены
+                </div>
 
-                <div className="text-left mb-6">
-                  <h3 className="text-lg font-bold text-white mb-3 text-center">Что входит:</h3>
-                  <ul className="space-y-2 text-sm text-gray-200">
+                <div className="text-left mb-4 sm:mb-6">
+                  <h3 className="text-base sm:text-lg font-bold text-white mb-2 sm:mb-3 text-center">Что входит:</h3>
+                  <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-200">
                     {[
                       "Готовые диалоги для всех ситуаций",
                       "Шаблоны под конкретную услугу",
@@ -715,7 +698,7 @@ export default function App() {
                   </ul>
                 </div>
 
-                <div className="flex items-center justify-center gap-2 text-xs flex-wrap">
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-xs flex-wrap">
                   <div className="px-2 py-1 bg-black text-white rounded">Apple Pay</div>
                   <div className="px-2 py-1 bg-white/20 text-white rounded">Google Pay</div>
                   <div className="px-2 py-1 bg-white/20 text-white rounded">Visa</div>
@@ -727,8 +710,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 09 — FAQ с мягким серым фоном */}
-      <section id="faq" className="relative py-12 sm:py-14 lg:py-16 bg-gradient-to-b from-slate-50/60 to-white">
+      {/* 09 — FAQ холодный серый */}
+      <section id="faq" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#f7f9fc_0%,#ffffff_70%)]">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
@@ -752,7 +735,7 @@ export default function App() {
                   <span className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ${openFaq === i ? "rotate-180" : ""}`}>⌄</span>
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 lg:px-8 py-5 border-t border-gray-200">
+                  <div className="px-6 lg:px-8 py-5 border-top border-gray-200">
                     <p className="text-sm lg:text-base text-gray-700 leading-relaxed">{f.a}</p>
                   </div>
                 )}
@@ -787,7 +770,6 @@ export default function App() {
       <style jsx>{`
         @keyframes fade-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
         .reveal-up { opacity: 0; animation: fade-in 0.8s ease-out forwards; }
         .animate-slide-up { animation: slide-up 0.3s ease-out; }
 
