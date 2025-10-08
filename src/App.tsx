@@ -271,20 +271,29 @@ export default function App() {
             background-repeat: no-repeat;
             background-size: cover;
             background-position: right center;
+            background-color: #e8e6e3;
           }
           /* Десктоп: человек правее и меньше, больше воздуха слева */
           @media (min-width:1024px){
             .hero-bg{
               background-size: 75%;
-              background-position: 110% center;
-              background-color: #fff;
+              background-position: 112% center;
+              background-color: #ebe9e6;
             }
           }
-          /* Мобилка: максимально справа, лицо не перекрывается текстом */
+          /* Мобилка: максимально справа и отдалить, чтобы лицо не перекрывалось */
           @media (max-width: 640px){
             .hero-bg{
-              background-size: 115%;
-              background-position: 95% 52%;
+              background-size: 85%;
+              background-position: 98% 58%;
+            }
+          }
+          /* Планшеты */
+          @media (min-width: 641px) and (max-width: 1023px){
+            .hero-bg{
+              background-size: 70%;
+              background-position: 105% center;
+              background-color: #ebe9e6;
             }
           }
           .result-subtitle {
