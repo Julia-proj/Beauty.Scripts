@@ -275,23 +275,16 @@ export default function App() {
           /* Десктоп: человек правее и меньше, больше воздуха слева */
           @media (min-width:1024px){
             .hero-bg{
-              background-size: 70%;
-              background-position: 102% center;
+              background-size: 75%;
+              background-position: 110% center;
               background-color: #fff;
             }
           }
-          /* Планшеты: промежуточное позиционирование */
-          @media (min-width: 641px) and (max-width: 1023px){
-            .hero-bg{
-              background-size: 85%;
-              background-position: 95% center;
-            }
-          }
-          /* Мобилка: фото справа, лицо не перекрывается текстом */
+          /* Мобилка: максимально справа, лицо не перекрывается текстом */
           @media (max-width: 640px){
             .hero-bg{
-              background-size: 130%;
-              background-position: 88% 32%;
+              background-size: 115%;
+              background-position: 95% 52%;
             }
           }
           .result-subtitle {
