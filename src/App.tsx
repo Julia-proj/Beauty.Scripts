@@ -265,7 +265,7 @@ export default function App() {
           </div>
         </div>
 
-        <style jsx>{`
+<style jsx>{`
           .hero-bg{
             background-image: url('/images/IMG_6243.jpeg');
             background-repeat: no-repeat;
@@ -275,16 +275,23 @@ export default function App() {
           /* Десктоп: человек правее и меньше, больше воздуха слева */
           @media (min-width:1024px){
             .hero-bg{
-              background-size: 78%;
-              background-position: 108% center;
+              background-size: 70%;
+              background-position: 102% center;
               background-color: #fff;
             }
           }
-          /* Мобилка: сместить НИЖЕ и ПРАВЕЕ, чтобы глаза не перекрывались */
+          /* Планшеты: промежуточное позиционирование */
+          @media (min-width: 641px) and (max-width: 1023px){
+            .hero-bg{
+              background-size: 85%;
+              background-position: 95% center;
+            }
+          }
+          /* Мобилка: фото справа, лицо не перекрывается текстом */
           @media (max-width: 640px){
             .hero-bg{
-              background-size: cover;
-              background-position: 82% 60%;
+              background-size: 130%;
+              background-position: 88% 32%;
             }
           }
           .result-subtitle {
