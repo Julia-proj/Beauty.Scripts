@@ -260,7 +260,7 @@ export default function App() {
 
         <style jsx>{`
           .hero-bg{
-            background-image: url('/images/IMG_6243.png');
+            background-image: url('/images/IMG_6536.png');
             background-repeat: no-repeat;
             background-size: cover;
             background-position: right center;
