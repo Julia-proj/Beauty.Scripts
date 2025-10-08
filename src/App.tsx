@@ -3,9 +3,9 @@ import InstaEmbed from "./components/InstaEmbed";
 
 const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
 
-// Рилсы: порядок с главным (бывшим 3-м) первым
+// Рилсы: 3-е — главное, порядок [3,2,1,4,5]
 const INSTAGRAM_REELS: string[] = [
-  "https://www.instagram.com/reel/DJmUkiNsZe1/", // было 3-е — теперь главное
+  "https://www.instagram.com/reel/DJmUkiNsZe1/",
   "https://www.instagram.com/reel/DJSHB73ogs1/",
   "https://www.instagram.com/reel/DJjUiEnM-A_/",
   "https://www.instagram.com/reel/DJoAXfKs6tu/",
@@ -34,20 +34,19 @@ function SectionMarker({ n }: { n: string }) {
       <style jsx>{`
         .section-marker{
           position:absolute;
-          left: 0.75rem;
-          top: 0.9rem;
+          left: 0.9rem;
+          top: 1rem;
           display:flex;
           align-items:center;
           gap:8px;
           z-index:10;
           opacity:0;
-          transform: translate(-28px, 6px);
+          transform: translateY(6px);
           animation: marker-in .7s ease forwards;
           animation-delay: .15s;
-          pointer-events:none;
         }
         @media (min-width:1024px){
-          .section-marker{ left:0; top:0.25rem; transform: translate(-64px, 6px); }
+          .section-marker{ left:0; top:0.25rem; transform: translate(-56px, 6px); }
         }
         .marker-number{
           font-weight:700; font-size:13px; letter-spacing:.12em;
@@ -60,8 +59,8 @@ function SectionMarker({ n }: { n: string }) {
         }
         @media (min-width:1024px){ .marker-line{ width:36px; } }
         @keyframes marker-in {
-          from { opacity:0; transform: translate(-28px, 10px); }
-          to { opacity:1; transform: translate(-28px, 6px); }
+          from { opacity:0; transform: translateY(10px); }
+          to { opacity:1; transform: translateY(0); }
         }
       `}</style>
     </div>
@@ -145,7 +144,7 @@ export default function App() {
   useEffect(() => {
     const id = setInterval(() => {
       setViewersCount(prev => {
-        const change = Math.floor(Math.random() * 5) - 2; // -2..+2
+        const change = Math.floor(Math.random() * 5) - 2;
         const next = prev + change;
         return Math.max(8, Math.min(18, next));
       });
@@ -214,26 +213,26 @@ export default function App() {
         </div>
       </header>
 
-      {/* HERO — отступы и переносы строк как просила */}
+      {/* HERO — смещение фона на мобиле (чуть ниже и правее), переносы строк в заголовках, glow для "Результат:" */}
       <section className="relative min-h-[75vh] sm:min-h-[88vh] flex items-center pt-20 sm:pt-24 pb-8 sm:pb-12 hero-bg">
         <div className="absolute inset-0 bg-gradient-to-r from-white/65 via-white/35 to-transparent md:from-white/45 md:via-white/25 md:to-transparent pointer-events-none"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="max-w-2xl">
             <h1 className="js-heading text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-4 sm:mb-5 text-gray-900">
-              <span className="block">Скрипты, которые</span>
-              <span className="block">превращают</span>
-              <span className="block"><span className="text-blue-600">сообщения в деньги</span></span>
+              <span>Скрипты, которые</span><br />
+              <span>превращают</span><br />
+              <span className="text-blue-600">сообщения в деньги</span>
             </h1>
 
-            <div className="result-subtitle mb-3 sm:mb-5">
+            <div className="result-subtitle mb-4 sm:mb-5">
               <p className="text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-900">
-                <span className="block">Проверенная система общения</span>
-                <span className="block">с клиентами для бьюти-мастеров</span>
+                <span>Проверенная система общения</span><br className="sm:hidden" />
+                <span className="sm:ml-0">с клиентами для бьюти-мастеров</span>
               </p>
             </div>
 
-            <p className="result-glow text-sm sm:text-base lg:text-lg text-gray-900 mb-6 sm:mb-8 leading-relaxed">
+            <p className="glow-text text-sm sm:text-base lg:text-lg text-gray-900 mb-6 sm:mb-8 leading-relaxed">
               <span className="font-medium">Результат:</span> закрытые возражения, увеличенный средний чек, экономия времени
             </p>
 
@@ -267,7 +266,6 @@ export default function App() {
             background-size: cover;
             background-position: right center;
           }
-          /* Десктоп — человек дальше, воздух слева */
           @media (min-width:1024px){
             .hero-bg{
               background-size: 75%;
@@ -275,17 +273,17 @@ export default function App() {
               background-color: #fff;
             }
           }
-          /* Мобилка — опускаем фото "чуть ниже", чтобы глаза не перекрывал текст */
+          /* На мобиле: лицо ниже и правее, чтобы текст не перекрывал глаза */
           @media (max-width: 640px){
             .hero-bg{
               background-size: cover;
-              background-position: 72% 62%;
+              background-position: 78% 60%;
             }
           }
           .result-subtitle {
             position: relative;
             padding-top: 12px;
-            margin-top: 6px;
+            margin-top: 8px;
           }
           .result-subtitle::before {
             content: '';
@@ -294,18 +292,11 @@ export default function App() {
             width: 64px; height: 2px;
             background: linear-gradient(90deg, rgba(59,130,246,.5) 0%, transparent 100%);
           }
-          /* Синевато-белое мягкое свечение для читабельности "Результат: ..." */
-          .result-glow{
-            color:#0b1220;
-            text-shadow:
-              0 0 8px rgba(59,130,246,.20),
-              0 0 2px rgba(255,255,255,.9);
-          }
         `}</style>
       </section>
 
       {/* 01 — пудровый бежево-голубой */}
-      <section id="comparison" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(to_bottom,#f5f2ef_0%,#fdfcfb_60%)]">
+      <section id="comparison" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(to_bottom,#f5f2ef_0%,#fdfcfb_60%)] section-with-marker">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-2">
@@ -370,7 +361,7 @@ export default function App() {
       </section>
 
       {/* 02 — пудровый лавандовый */}
-      <section id="why" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#faf7f9_0%,#ffffff_70%)]">
+      <section id="why" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#faf7f9_0%,#ffffff_70%)] section-with-marker">
         <SectionMarker n="02" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
@@ -399,7 +390,7 @@ export default function App() {
       </section>
 
       {/* 03 — пудровый мятный */}
-      <section id="for" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f3f9f6_0%,#ffffff_70%)]">
+      <section id="for" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f3f9f6_0%,#ffffff_70%)] section-with-marker">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
@@ -430,7 +421,7 @@ export default function App() {
       </section>
 
       {/* 04 — пудровый серо-бежевый */}
-      <section id="whats-included" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f7f5f3_0%,#ffffff_70%)]">
+      <section id="whats-included" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f7f5f3_0%,#ffffff_70%)] section-with-marker">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
@@ -470,11 +461,10 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 — бонусы: компактнее на телефоне, без удаления рилсов */}
-      <section id="bonuses" className="relative py-7 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f0ff_0%,#fff7fb_60%,#ffffff_100%)] overflow-hidden">
+      {/* 05 — бонусы: компактнее карточки на мобиле, рилсы не удаляем */}
+      <section id="bonuses" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f0ff_0%,#fff7fb_60%,#ffffff_100%)] overflow-hidden section-with-marker">
         <SectionMarker n="05" />
 
-        {/* деликатные конфетти */}
         <div className="confetti-container">
           {[...Array(14)].map((_, i) => (
             <div key={i} className="confetti" style={{
@@ -485,7 +475,7 @@ export default function App() {
           ))}
         </div>
 
-        <div className="max-w-6xl mx-auto px-3 sm:px-6 relative">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
           <div className="text-center">
             <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
               <span className="text-purple-600">Бонусы</span> при покупке
@@ -495,20 +485,20 @@ export default function App() {
             </p>
           </div>
 
-          {/* ещё компактнее на мобиле: меньше отступы/гепы, но обложки не уменьшаем */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5 mt-5 sm:mt-8">
+          {/* компактнее на мобиле: уменьшаем внутренние отступы и gap */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5 mt-6 sm:mt-8">
             {[
               { image: "/images/bonus1.png", title: "Гайд «Работа с клиентской базой»", desc: "Повторные записи без рекламы → возвращайте старых клиентов.", old: "27€" },
               { image: "/images/bonus2.png", title: "Чек-лист «30+ источников клиентов»", desc: "Платные и бесплатные способы → где взять заявки уже сегодня.", old: "32€" },
               { image: "/images/bonus3.png", title: "Гайд «Продажи на консультации»", desc: "5 этапов продаж → мягкий апсейл дополнительных услуг.", old: "20€" },
             ].map((b, i) => (
               <div key={i} className="rounded-2xl p-3.5 sm:p-5 text-center bg-white shadow-sm border hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 reveal-up" style={{animationDelay:`${i*100}ms`}}>
-                <div className="mb-3 sm:mb-4">
+                <div className="mb-2.5 sm:mb-4">
                   <img src={b.image} alt={`Бонус ${i + 1}`} className="w-28 h-36 sm:w-32 sm:h-40 mx-auto object-cover rounded-lg" loading="lazy" />
                 </div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">{b.title}</h3>
-                <p className="mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed">{b.desc}</p>
-                <div className="mt-3 flex items-center justify-center gap-2">
+                <p className="mt-1.5 text-xs sm:text-sm text-gray-600 leading-relaxed">{b.desc}</p>
+                <div className="mt-2.5 flex items-center justify-center gap-2">
                   <span className="text-sm sm:text-base font-bold text-gray-400 line-through">{b.old}</span>
                   <span className="text-base sm:text-lg font-bold text-green-600">0€</span>
                 </div>
@@ -535,8 +525,8 @@ export default function App() {
         `}</style>
       </section>
 
-      {/* 06 — «Что изменится сразу» */}
-      <section id="immediate" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f2f9f6_0%,#ffffff_75%)]">
+      {/* 06 — Что изменится сразу */}
+      <section id="immediate" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f2f9f6_0%,#ffffff_75%)] section-with-marker">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-6 sm:mb-8">
@@ -554,7 +544,7 @@ export default function App() {
               "Станешь увереннее — на всё есть готовый ответ.",
             ].map((t, i) => (
               <div key={i} className="flex items-start gap-3 sm:gap-4 bg-white/90 p-4 sm:p-5 rounded-2xl border border-teал-50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 reveal-up" style={{animationDelay:`${i*80}ms`}}>
-                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-teал-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg className="w-3 h-3 sm:w-4 sm:h-4 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 </div>
                 <span className="text-sm sm:text-base lg:text-lg font-medium text-gray-800">{t}</span>
@@ -564,8 +554,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 07 — отзывы + рилсы, без рамок по краям карточек отзывов */}
-      <section id="reviews" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f7fa_0%,#ffffff_70%)]">
+      {/* 07 — отзывы */}
+      <section id="reviews" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f7fa_0%,#ffffff_70%)] section-with-marker">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-6 sm:mb-8">
@@ -591,31 +581,33 @@ export default function App() {
             ))}
           </div>
 
-          {/* Рилсы: главное — первое из массива (бывшее 3-е) */}
           <div className="flex gap-2 sm:gap-3 justify-center items-center overflow-x-auto pb-2 reels-container">
             {INSTAGRAM_REELS.slice(0, 3).map((url, idx) => (
               <div
                 key={url}
                 className={`${
-                  idx === 0 ? 'reel-card-featured' : 'reel-card-small'
+                  idx === 1 ? 'reel-card-featured' : 'reel-card-small'
                 } rounded-xl overflow-hidden border-2 ${
-                  idx === 0 ? 'border-blue-400' : 'border-gray-200'
+                  idx === 1 ? 'border-blue-400' : 'border-gray-200'
                 } shadow-md flex-shrink-0 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 reveal-up`}
                 style={{animationDelay:`${idx*100}ms`}}
               >
-                <InstaEmbed url={url} maxWidth={idx === 0 ? 280 : 220} />
+                <InstaEmbed url={url} maxWidth={idx === 1 ? 280 : 220} />
               </div>
             ))}
           </div>
         </div>
 
         <style jsx>{`
-          .reels-container { max-width: 100%; scroll-snap-type: x mandatory; }
-          .reels-container > * { scroll-snap-align: center; }
-
+          .reels-container {
+            max-width: 100%;
+            scroll-snap-type: x mandatory;
+          }
+          .reels-container > * {
+            scroll-snap-align: center;
+          }
           .reel-card-small { width: 140px; height: 250px; }
           .reel-card-featured { width: 180px; height: 320px; }
-
           @media (min-width: 640px){
             .reel-card-small { width: 200px; height: 355px; }
             .reel-card-featured { width: 260px; height: 460px; }
@@ -624,7 +616,6 @@ export default function App() {
             .reel-card-small { width: 220px; height: 391px; }
             .reel-card-featured { width: 280px; height: 500px; }
           }
-
           .reel-card-small :global(iframe),
           .reel-card-featured :global(iframe) {
             width: 100% !important;
@@ -635,8 +626,8 @@ export default function App() {
         `}</style>
       </section>
 
-      {/* 08 — Оффер: 85% (не трогаю структуру) */}
-      <section id="offer" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#ffffff_0%,#f7f5f3_70%)]">
+      {/* 08 — Оффер: скидка 85% */}
+      <section id="offer" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#ffffff_0%,#f7f5f3_70%)] section-with-marker">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-6 sm:mb-8">
@@ -725,7 +716,7 @@ export default function App() {
       </section>
 
       {/* 09 — FAQ */}
-      <section id="faq" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f9f7f6_0%,#ffffff_70%)]">
+      <section id="faq" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f9f7f6_0%,#ffffff_70%)] section-with-marker">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
@@ -784,21 +775,29 @@ export default function App() {
       <style jsx>{`
         @keyframes fade-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
         .reveal-up { opacity: 0; animation: fade-in 0.8s ease-out forwards; }
         .animate-slide-up { animation: slide-up 0.3s ease-out; }
 
-        .js-heading{
-          opacity: 0;
-          transform: translateY(14px);
-          transition: opacity .7s ease, transform .7s ease;
-          will-change: opacity, transform;
-        }
-        .js-heading.head-in{
-          opacity: 1;
-          transform: translateY(0);
+        .js-heading{ opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; will-change: opacity, transform; }
+        .js-heading.head-in{ opacity: 1; transform: translateY(0); }
+
+        /* Мягкое свечение букв для блока "Результат:" — без рамок */
+        .glow-text{
+          text-shadow:
+            0 1px 0 rgba(255,255,255,0.6),
+            0 6px 16px rgba(255,255,255,0.35);
         }
 
+        /* Чуть больше отступ сверху у секций с маркерами на мобиле,
+           чтобы цифры 01/02… не сближались с заголовком */
+        @media (max-width: 640px){
+          .section-with-marker .js-heading{
+            margin-top: 6px;
+          }
+        }
+
+        /* Лёгкая "подпрыгивающая" анимация при hover у карточек */
         @media (hover: hover) {
           .hover\\:shadow-lg:hover { animation: float 2s ease-in-out infinite; }
         }
