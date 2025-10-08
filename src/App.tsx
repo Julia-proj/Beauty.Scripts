@@ -260,24 +260,24 @@ export default function App() {
 
         <style jsx>{`
           .hero-bg{
-            background-image: url('/images/IMG_6536.png');
+            background-image: url('/images/IMG_6537.jpeg');
             background-repeat: no-repeat;
             background-size: cover;
             background-position: right center;
-            background-color: #ebe9e6;
           }
           /* Десктоп: человек правее и меньше, больше воздуха слева */
           @media (min-width:1024px){
             .hero-bg{
-              background-size: 70%;
-              background-position: 115% 45%;
+              background-size: 78%;
+              background-position: 108% center;
+              background-color: #fff;
             }
           }
-          /* Мобилка: справа и ниже, чтобы текст не перекрывал лицо */
-          @media (max-width:640px){
+          /* Мобилка: сместить НИЖЕ и ПРАВЕЕ, чтобы глаза не перекрывались */
+          @media (max-width: 640px){
             .hero-bg{
-              background-size: 90%;
-              background-position: 95% 62%;
+              background-size: cover;
+              background-position: 82% 60%;
             }
           }
           /* Планшеты */
