@@ -231,7 +231,7 @@ export default function App() {
             </div>
 
             <p className="text-sm sm:text-base lg:text-lg text-gray-900 mb-6 sm:mb-8 leading-relaxed inline-block soft-outline">
-              <span className="font-semibold uppercase tracking-wide">Результат:</span>{" "}
+              <span className="font-semibold">Результат:</span>{" "}
               закрытые возражения, увеличенный средний чек, экономия времени
             </p>
 
@@ -260,33 +260,31 @@ export default function App() {
 
         <style jsx>{`
           .hero-bg{
-            background-image: url('/images/IMG_6243.jpeg'); /* проверь расширение в /public/images */
+            background-image: url('/images/IMG_6243.jpeg');
             background-repeat: no-repeat;
             background-size: cover;
             background-position: right center;
-            background-color: #e8e6e3;
+            background-color: #ebe9e6;
           }
           /* Десктоп: человек правее и меньше, больше воздуха слева */
           @media (min-width:1024px){
             .hero-bg{
-              background-size: 75%;
-              background-position: 112% center;
-              background-color: #ebe9e6;
+              background-size: 70%;
+              background-position: 115% 45%;
             }
           }
-          /* Мобилка: максимально справа и чуть ниже, чтобы лицо не перекрывалось */
+          /* Мобилка: справа и ниже, чтобы текст не перекрывал лицо */
           @media (max-width:640px){
             .hero-bg{
-              background-size: 85%;
-              background-position: 98% 58%;
+              background-size: 90%;
+              background-position: 95% 62%;
             }
           }
           /* Планшеты */
           @media (min-width:641px) and (max-width:1023px){
             .hero-bg{
-              background-size: 70%;
-              background-position: 105% center;
-              background-color: #ebe9e6;
+              background-size: 75%;
+              background-position: 108% 48%;
             }
           }
           .result-subtitle{
@@ -296,19 +294,19 @@ export default function App() {
             content:''; position:absolute; top:0; left:0; width:64px; height:2px;
             background: linear-gradient(90deg, rgba(59,130,246,.5) 0%, transparent 100%);
           }
-          /* Мягкая читаемость для "Результат" */
+          /* Мягкая читаемость для "Результат" — без четких границ */
           .soft-outline{
-            padding:6px 10px; border-radius:10px;
-            background: linear-gradient(to right, rgba(255,255,255,.75), rgba(255,255,255,.35));
-            backdrop-filter: blur(2px) saturate(105%);
-            -webkit-backdrop-filter: blur(2px) saturate(105%);
-            box-shadow: 0 0 0 1px rgba(255,255,255,.25) inset;
+            padding:8px 12px; border-radius:12px;
+            background: linear-gradient(to right, rgba(255,255,255,.65), rgba(255,255,255,.25));
+            backdrop-filter: blur(4px) saturate(110%);
+            -webkit-backdrop-filter: blur(4px) saturate(110%);
+            box-shadow: none;
           }
         `}</style>
       </section>
 
-      {/* 01 — фон: пудровый бежево-голубой, безопасные отступы для заголовка/маркера */}
-      <section id="comparison" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(to_bottom,#f5f2ef_0%,#fdfcfb_60%)]">
+      {/* 01 — фон: пудровый бежево-голубой */}
+      <section id="comparison" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(to_bottom,#f5f2ef_0%,#fdfcfb_60%)] lg:bg-[linear-gradient(to_bottom,#f5f2ef_0%,#faf8f6_60%)]">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-2 pt-2 sm:pt-0">
@@ -373,7 +371,7 @@ export default function App() {
       </section>
 
       {/* 02 — пудровый лавандовый */}
-      <section id="why" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#faf7f9_0%,#ffffff_70%)]">
+      <section id="why" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#faf7f9_0%,#ffffff_70%)] lg:bg-[linear-gradient(180deg,#f9f6f8_0%,#faf8f7_70%)]">
         <SectionMarker n="02" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center pt-2 sm:pt-0">
@@ -402,7 +400,7 @@ export default function App() {
       </section>
 
       {/* 03 — пудровый мятный */}
-      <section id="for" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f3f9f6_0%,#ffffff_70%)]">
+      <section id="for" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f3f9f6_0%,#ffffff_70%)] lg:bg-[linear-gradient(180deg,#f3f8f6_0%,#f8f7f5_70%)]">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 pt-2 sm:pt-0">
@@ -433,7 +431,7 @@ export default function App() {
       </section>
 
       {/* 04 — пудровый серо-бежевый */}
-      <section id="whats-included" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f7f5f3_0%,#ffffff_70%)]">
+      <section id="whats-included" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f7f5f3_0%,#ffffff_70%)] lg:bg-[linear-gradient(180deg,#f7f5f3_0%,#f9f8f6_70%)]">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center pt-2 sm:pt-0">
@@ -534,7 +532,7 @@ export default function App() {
       </section>
 
       {/* 06 — центр + подчёркивание, пудровый фон */}
-      <section id="immediate" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f2f9f6_0%,#ffffff_75%)]">
+      <section id="immediate" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f2f9f6_0%,#ffffff_75%)] lg:bg-[linear-gradient(180deg,#f2f8f6_0%,#f8f7f5_75%)]">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-6 sm:mb-8 pt-2 sm:pt-0">
@@ -563,7 +561,7 @@ export default function App() {
       </section>
 
       {/* 07 — отзывы: компакт, без тёмных рамок; рилсы — центральная больше */}
-      <section id="reviews" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f7fa_0%,#ffffff_70%)]">
+      <section id="reviews" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f7fa_0%,#ffffff_70%)] lg:bg-[linear-gradient(180deg,#f6f7f9_0%,#f9f8f6_70%)]">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-6 sm:mb-8 pt-2 sm:pt-0">
@@ -631,7 +629,7 @@ export default function App() {
       </section>
 
       {/* 08 — оффер (скидка 85%) */}
-      <section id="offer" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#ffffff_0%,#f7f5f3_70%)]">
+      <section id="offer" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#ffffff_0%,#f7f5f3_70%)] lg:bg-[linear-gradient(180deg,#faf8f6_0%,#f7f5f3_70%)]">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-6 sm:mb-8 pt-2 sm:pt-0">
@@ -720,7 +718,7 @@ export default function App() {
       </section>
 
       {/* 09 — FAQ */}
-      <section id="faq" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f9f7f6_0%,#ffffff_70%)]">
+      <section id="faq" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f9f7f6_0%,#ffffff_70%)] lg:bg-[linear-gradient(180deg,#f9f7f6_0%,#faf8f6_70%)]">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 pt-2 sm:pt-0">
