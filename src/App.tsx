@@ -3,7 +3,7 @@ import InstaEmbed from "./components/InstaEmbed";
 
 const STRIPE_URL = "https://buy.stripe.com/5kQdRb8cbglMf7E7dSdQQ00";
 
-// Рилсы: порядок [3,2,1,4,5] — 3-е главное
+// Порядок рилсов из твоей версии (3-е — главное, 1↔3 поменяны)
 const INSTAGRAM_REELS: string[] = [
   "https://www.instagram.com/reel/DJmUkiNsZe1/",
   "https://www.instagram.com/reel/DJSHB73ogs1/",
@@ -34,8 +34,8 @@ function SectionMarker({ n }: { n: string }) {
       <style jsx>{`
         .section-marker{
           position:absolute;
-          left: 1rem;
-          top: .75rem;
+          left: .75rem;          /* чуть дальше от заголовка на мобиле */
+          top: .5rem;            /* выше, чтобы не пересекаться */
           display:flex;
           align-items:center;
           gap:8px;
@@ -45,11 +45,12 @@ function SectionMarker({ n }: { n: string }) {
           animation: marker-in .7s ease forwards;
           animation-delay: .15s;
         }
-        @media (max-width:640px){
-          .section-marker{ left:.75rem; top:.5rem; }
-        }
         @media (min-width:1024px){
-          .section-marker{ left:0; top:.25rem; transform: translate(-56px, 6px); }
+          .section-marker{
+            left:0;
+            top:0.25rem;
+            transform: translate(-56px, 6px);
+          }
         }
         .marker-number{
           font-weight:700; font-size:13px; letter-spacing:.12em;
@@ -216,31 +217,29 @@ export default function App() {
         </div>
       </header>
 
-      {/* HERO */}
-      <section className="relative min-h-[75vh] sm:min-h-[88vh] flex items-center pt-20 sm:pt-24 pb-8 sm:pb-12 hero-bg">
-        {/* деликатный верхний/левый градиент для читаемости */}
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,.75) 0%,rgba(255,255,255,.45) 38%,rgba(255,255,255,.0) 70%)] sm:bg-[linear-gradient(90deg,rgba(255,255,255,.65) 0%,rgba(255,255,255,.35) 40%,rgba(255,255,255,.0) 70%)] pointer-events-none"></div>
+      {/* HERO — мобильное фото чуть ниже и правее; заголовок и подзаголовок с переносами; "Результат" с мягкой подложкой */}
+      <section className="relative min-h-[75vh] sm:min-h-[88vh] flex items-center pt-24 pb-8 sm:pb-12 hero-bg">
+        {/* деликатный градиент для читаемости текста */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/40 to-transparent md:from-white/50 md:via-white/30 md:to-transparent pointer-events-none"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="max-w-2xl">
-            {/* ЖЁСТКИЕ переносы строк в заголовке */}
-            <h1 className="js-heading section-title text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-3 sm:mb-4 text-gray-900">
-              <span className="block">Скрипты, которые</span>
-              <span className="block">превращают</span>
-              <span className="block"><span className="text-blue-600">сообщения в деньги</span></span>
+            <h1 className="js-heading text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-4 sm:mb-5 text-gray-900">
+              <span className="inline">Скрипты, которые</span>
+              <span className="block sm:inline"> превращают</span>{" "}
+              <span className="block sm:inline"><span className="text-blue-600">сообщения в деньги</span></span>
             </h1>
 
-            {/* Подзаголовок с переносом строки как просила */}
-            <div className="result-subtitle mb-3 sm:mb-4">
+            <div className="result-subtitle mb-4 sm:mb-5">
               <p className="text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-gray-900">
-                <span className="block">Проверенная система общения</span>
-                <span className="block">с клиентами для бьюти-мастеров</span>
+                <span className="inline">Проверенная система общения</span>
+                <span className="block sm:inline"> с клиентами для бьюти-мастеров</span>
               </p>
             </div>
 
-            {/* "РЕЗУЛЬТАТ:" — пастельный светлый фон + синяя тонкая обводка */}
-            <p className="text-sm sm:text-base lg:text-lg text-gray-800 mb-6 sm:mb-8 leading-relaxed bg-[#f3f8ff] border border-[#3b82f6]/50 rounded-xl px-3 py-2 inline-block">
-              <span className="font-medium">Результат:</span> закрытые возражения, увеличенный средний чек, экономия времени
+            <p className="text-sm sm:text-base lg:text-lg text-gray-900 mb-6 sm:mb-8 leading-relaxed inline-block soft-outline">
+              <span className="font-semibold uppercase tracking-wide">Результат:</span>{" "}
+              закрытые возражения, увеличенный средний чек, экономия времени
             </p>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4">
@@ -273,25 +272,25 @@ export default function App() {
             background-size: cover;
             background-position: right center;
           }
-          /* Desktop: больше воздуха слева, человек правее и чуть "дальше" */
+          /* Десктоп: человек правее и меньше, больше воздуха слева */
           @media (min-width:1024px){
             .hero-bg{
-              background-size: 80%;
+              background-size: 78%;
               background-position: 108% center;
               background-color: #fff;
             }
           }
-          /* Mobile: смещаем НИЖЕ и ПРАВЕЕ, чтобы глаза/лицо не шли под текст */
+          /* Мобилка: сместить НИЖЕ и ПРАВЕЕ, чтобы глаза не перекрывались */
           @media (max-width: 640px){
             .hero-bg{
               background-size: cover;
-              background-position: 84% 62%;
+              background-position: 82% 60%;
             }
           }
           .result-subtitle {
             position: relative;
-            padding-top: 10px;
-            margin-top: 6px;
+            padding-top: 12px;
+            margin-top: 8px;
           }
           .result-subtitle::before {
             content: '';
@@ -300,15 +299,24 @@ export default function App() {
             width: 64px; height: 2px;
             background: linear-gradient(90deg, rgba(59,130,246,.5) 0%, transparent 100%);
           }
+          /* Мягкая читаемость для строки "Результат" */
+          .soft-outline{
+            padding: 6px 10px;
+            border-radius: 10px;
+            background: linear-gradient( to right, rgba(255,255,255,.75), rgba(255,255,255,.35) );
+            backdrop-filter: blur(2px) saturate(105%);
+            -webkit-backdrop-filter: blur(2px) saturate(105%);
+            box-shadow: 0 0 0 1px rgba(255,255,255,.25) inset;
+          }
         `}</style>
       </section>
 
-      {/* 01 — фон и отступы маркера от заголовка корректны на мобиле */}
-      <section id="comparison" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(to_bottom,#f5f2ef_0%,#fdfcfb_60%)]">
+      {/* 01 — фон: пудровый бежево-голубой, увеличены безопасные отступы заголовка */}
+      <section id="comparison" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(to_bottom,#f5f2ef_0%,#fdfcfb_60%)]">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-2 sm:mb-3 pt-3 sm:pt-4">
-            <h2 className="js-heading section-title text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+          <div className="text-center mb-2 pt-2 sm:pt-0">
+            <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
               Как изменится ваша <span className="text-blue-600">работа с клиентами</span>
             </h2>
             <p className="mt-2 sm:mt-3 text-sm sm:text-base text-gray-600 reveal-up" style={{animationDelay:"120ms"}}>
@@ -368,12 +376,12 @@ export default function App() {
         </div>
       </section>
 
-      {/* 02 */}
-      <section id="why" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#faf7f9_0%,#ffffff_70%)]">
+      {/* 02 — пудровый лавандовый */}
+      <section id="why" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#faf7f9_0%,#ffffff_70%)]">
         <SectionMarker n="02" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center pt-3 sm:pt-4">
-            <h2 className="js-heading section-title text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+          <div className="text-center pt-2 sm:pt-0">
+            <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
               Почему это <span className="text-rose-700">важно</span>
             </h2>
             <p className="mt-2 sm:mt-3 text-sm sm:text-base text-gray-600 reveal-up" style={{animationDelay:"120ms"}}>
@@ -397,11 +405,11 @@ export default function App() {
         </div>
       </section>
 
-      {/* 03 */}
-      <section id="for" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f3f9f6_0%,#ffffff_70%)]">
+      {/* 03 — пудровый мятный */}
+      <section id="for" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f3f9f6_0%,#ffffff_70%)]">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <h2 className="js-heading section-title text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 pt-3 sm:pt-4">
+          <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 pt-2 sm:pt-0">
             Кому подходят <span className="text-emerald-700">скрипты</span>
           </h2>
 
@@ -428,12 +436,12 @@ export default function App() {
         </div>
       </section>
 
-      {/* 04 */}
-      <section id="whats-included" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f7f5f3_0%,#ffffff_70%)]">
+      {/* 04 — пудровый серо-бежевый */}
+      <section id="whats-included" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f7f5f3_0%,#ffffff_70%)]">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center pt-3 sm:pt-4">
-            <h2 className="js-heading section-title text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+          <div className="text-center pt-2 sm:pt-0">
+            <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
               Что входит в <span className="text-blue-600">систему скриптов</span>
             </h2>
             <p className="mt-2 sm:mt-3 text-sm sm:text-base text-gray-600 reveal-up" style={{animationDelay:"120ms"}}>Полный набор инструментов для увеличения продаж</p>
@@ -469,13 +477,24 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 — бонусы компактнее (меньше отступов), рилсы остаются как есть */}
-      <section id="bonuses" className="relative py-7 sm:py-10 lg:py-12 bg-[linear-gradient(180deg,#f5f0ff_0%,#fff7fb_60%,#ffffff_100%)] overflow-hidden">
+      {/* 05 — бонусы: компактнее на мобиле, не удаляю рилсы; фокус на вмещаемости */}
+      <section id="bonuses" className="relative py-9 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f0ff_0%,#fff7fb_60%,#ffffff_100%)] overflow-hidden">
         <SectionMarker n="05" />
 
+        {/* очень деликатные конфетти */}
+        <div className="confetti-container">
+          {[...Array(12)].map((_, i) => (
+            <div key={i} className="confetti" style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${3 + Math.random() * 2}s`
+            }} />
+          ))}
+        </div>
+
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
-          <div className="text-center pt-2">
-            <h2 className="js-heading section-title text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+          <div className="text-center">
+            <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
               <span className="text-purple-600">Бонусы</span> при покупке
             </h2>
             <p className="mt-2 sm:mt-3 text-sm sm:text-base text-gray-600 reveal-up" style={{animationDelay:"120ms"}}>
@@ -483,15 +502,15 @@ export default function App() {
             </p>
           </div>
 
-          {/* компактнее на мобиле */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-5 sm:mt-6">
+          {/* компакт: меньше отступы, но обложки остаются крупными */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-5 sm:mt-7">
             {[
               { image: "/images/bonus1.png", title: "Гайд «Работа с клиентской базой»", desc: "Повторные записи без рекламы → возвращайте старых клиентов.", old: "27€" },
               { image: "/images/bonus2.png", title: "Чек-лист «30+ источников клиентов»", desc: "Платные и бесплатные способы → где взять заявки уже сегодня.", old: "32€" },
               { image: "/images/bonus3.png", title: "Гайд «Продажи на консультации»", desc: "5 этапов продаж → мягкий апсейл дополнительных услуг.", old: "20€" },
             ].map((b, i) => (
-              <div key={i} className="rounded-2xl p-4 sm:p-5 text-center bg-white shadow-sm border hover:shadow-lg hover:-translate-y-1 transition-all duration-300 reveal-up" style={{animationDelay:`${i*90}ms`}}>
-                <div className="mb-3">
+              <div key={i} className="rounded-2xl p-4 sm:p-5 text-center bg-white shadow-sm border hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 reveal-up" style={{animationDelay:`${i*100}ms`}}>
+                <div className="mb-3 sm:mb-4">
                   <img src={b.image} alt={`Бонус ${i + 1}`} className="w-28 h-36 sm:w-32 sm:h-40 mx-auto object-cover rounded-lg" loading="lazy" />
                 </div>
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">{b.title}</h3>
@@ -504,14 +523,31 @@ export default function App() {
             ))}
           </div>
         </div>
+
+        <style jsx>{`
+          .confetti-container { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+          .confetti {
+            position:absolute; width:8px; height:8px; opacity:0;
+            background: linear-gradient(45deg, #b197fc 0%, #a29bfe 100%);
+            animation: confetti-fall linear infinite;
+            border-radius: 2px;
+          }
+          .confetti:nth-child(2n){ background: linear-gradient(45deg,#f093fb 0%,#f5576c 100%); }
+          .confetti:nth-child(3n){ background: linear-gradient(45deg,#4facfe 0%,#00f2fe 100%); }
+          .confetti:nth-child(4n){ background: linear-gradient(45deg,#43e97b 0%,#38f9d7 100%); }
+          @keyframes confetti-fall {
+            0% { transform: translateY(-80px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+          }
+        `}</style>
       </section>
 
-      {/* 06 — центр и подчёркивание уже настроены выше */}
-      <section id="immediate" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f2f9f6_0%,#ffffff_75%)]">
+      {/* 06 — центр + подчёркивание, пудровый фон */}
+      <section id="immediate" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f2f9f6_0%,#ffffff_75%)]">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-6 sm:mb-8 pt-2">
-            <h2 className="js-heading section-title text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 inline-block">
+          <div className="text-center mb-6 sm:mb-8 pt-2 sm:pt-0">
+            <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 inline-block">
               <span className="text-teal-700">Что изменится сразу</span>
               <span className="block mx-auto mt-2 h-[2px] w-24 bg-gradient-to-r from-teal-600 via-sky-600 to-teal-600 rounded-full"></span>
             </h2>
@@ -525,7 +561,7 @@ export default function App() {
               "Станешь увереннее — на всё есть готовый ответ.",
             ].map((t, i) => (
               <div key={i} className="flex items-start gap-3 sm:gap-4 bg-white/90 p-4 sm:p-5 rounded-2xl border border-teal-50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 reveal-up" style={{animationDelay:`${i*80}ms`}}>
-                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-teал-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg className="w-3 h-3 sm:w-4 sm:h-4 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 </div>
                 <span className="text-sm sm:text-base lg:text-lg font-medium text-gray-800">{t}</span>
@@ -535,11 +571,11 @@ export default function App() {
         </div>
       </section>
 
-      {/* 07 — отзывы + рилсы (без изменений функционала, только отступы заголовка) */}
-      <section id="reviews" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f7fa_0%,#ffffff_70%)]">
+      {/* 07 — отзывы: компакт, без тёмных рамок */}
+      <section id="reviews" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f7fa_0%,#ffffff_70%)]">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <h2 className="js-heading section-title text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-6 sm:mb-8 pt-2">
+          <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-6 sm:mb-8 pt-2 sm:pt-0">
             Отзывы клиентов
           </h2>
 
@@ -562,6 +598,7 @@ export default function App() {
             ))}
           </div>
 
+          {/* Рилсы: оставлены; центральная — крупнее (главная) */}
           <div className="flex gap-2 sm:gap-3 justify-center items-center overflow-x-auto pb-2 reels-container">
             {INSTAGRAM_REELS.slice(0, 3).map((url, idx) => (
               <div
@@ -582,8 +619,10 @@ export default function App() {
         <style jsx>{`
           .reels-container { max-width: 100%; scroll-snap-type: x mandatory; }
           .reels-container > * { scroll-snap-align: center; }
+
           .reel-card-small { width: 140px; height: 250px; }
           .reel-card-featured { width: 180px; height: 320px; }
+
           @media (min-width: 640px){
             .reel-card-small { width: 200px; height: 355px; }
             .reel-card-featured { width: 260px; height: 460px; }
@@ -592,6 +631,7 @@ export default function App() {
             .reel-card-small { width: 220px; height: 391px; }
             .reel-card-featured { width: 280px; height: 500px; }
           }
+
           .reel-card-small :global(iframe),
           .reel-card-featured :global(iframe) {
             width: 100% !important;
@@ -602,12 +642,12 @@ export default function App() {
         `}</style>
       </section>
 
-      {/* 08 — оффер (скидка 85% оставлена) */}
-      <section id="offer" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#ffffff_0%,#f7f5f3_70%)]">
+      {/* 08 — оффер (скидка 85%) */}
+      <section id="offer" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#ffffff_0%,#f7f5f3_70%)]">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-6 sm:mb-8">
-            <h2 className="js-heading section-title text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900">
+          <div className="text-center mb-6 sm:mb-8 pt-2 sm:pt-0">
+            <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900">
               Полная система со скидкой <span className="text-blue-600">85%</span>
             </h2>
             <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-500 reveal-up leading-relaxed px-4" style={{animationDelay:"120ms"}}>
@@ -691,11 +731,11 @@ export default function App() {
         </div>
       </section>
 
-      {/* 09 */}
-      <section id="faq" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f9f7f6_0%,#ffffff_70%)]">
+      {/* 09 — FAQ */}
+      <section id="faq" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f9f7f6_0%,#ffffff_70%)]">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="js-heading section-title text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 pt-2">
+          <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 pt-2 sm:pt-0">
             Частые вопросы
           </h2>
 
@@ -751,6 +791,8 @@ export default function App() {
       <style jsx>{`
         @keyframes fade-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+
         .reveal-up { opacity: 0; animation: fade-in 0.8s ease-out forwards; }
         .animate-slide-up { animation: slide-up 0.3s ease-out; }
 
@@ -765,10 +807,8 @@ export default function App() {
           transform: translateY(0);
         }
 
-        /* небольшой безопасный верхний отступ для всех заголовков секций, чтобы цифры 01/02 не залипали */
-        .section-title { margin-top: .1rem; }
-        @media (max-width: 640px){
-          .section-title { margin-top: .35rem; }
+        @media (hover: hover) {
+          .hover\\:shadow-lg:hover { animation: float 2s ease-in-out infinite; }
         }
       `}</style>
     </div>
