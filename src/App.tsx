@@ -34,8 +34,8 @@ function SectionMarker({ n }: { n: string }) {
       <style jsx>{`
         .section-marker{
           position:absolute;
-          left: .75rem;          /* чуть дальше от заголовка на мобиле */
-          top: .5rem;            /* выше, чтобы не пересекаться */
+          left:.75rem;     /* больше отступ от заголовка на мобиле */
+          top:.5rem;
           display:flex;
           align-items:center;
           gap:8px;
@@ -46,11 +46,7 @@ function SectionMarker({ n }: { n: string }) {
           animation-delay: .15s;
         }
         @media (min-width:1024px){
-          .section-marker{
-            left:0;
-            top:0.25rem;
-            transform: translate(-56px, 6px);
-          }
+          .section-marker{ left:0; top:0.25rem; transform: translate(-56px,6px); }
         }
         .marker-number{
           font-weight:700; font-size:13px; letter-spacing:.12em;
@@ -62,10 +58,7 @@ function SectionMarker({ n }: { n: string }) {
           background: linear-gradient(90deg, rgba(212,175,122,.45) 0%, transparent 100%);
         }
         @media (min-width:1024px){ .marker-line{ width:36px; } }
-        @keyframes marker-in {
-          from { opacity:0; transform: translateY(10px); }
-          to { opacity:1; transform: translateY(0); }
-        }
+        @keyframes marker-in{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
       `}</style>
     </div>
   );
@@ -217,9 +210,9 @@ export default function App() {
         </div>
       </header>
 
-      {/* HERO — мобильное фото чуть ниже и правее; заголовок и подзаголовок с переносами; "Результат" с мягкой подложкой */}
+      {/* HERO — мобильное фото чуть ниже и правее; переносы строк; мягкая плашка для "Результат" */}
       <section className="relative min-h-[75vh] sm:min-h-[88vh] flex items-center pt-24 pb-8 sm:pb-12 hero-bg">
-        {/* деликатный градиент для читаемости текста */}
+        {/* деликатный градиент слева для читаемости */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/40 to-transparent md:from-white/50 md:via-white/30 md:to-transparent pointer-events-none"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
@@ -265,9 +258,9 @@ export default function App() {
           </div>
         </div>
 
-<style jsx>{`
+        <style jsx>{`
           .hero-bg{
-            background-image: url('/images/IMG_6243.jpeg');
+            background-image: url('/images/IMG_6243.jpeg'); /* проверь расширение в /public/images */
             background-repeat: no-repeat;
             background-size: cover;
             background-position: right center;
@@ -281,38 +274,32 @@ export default function App() {
               background-color: #ebe9e6;
             }
           }
-          /* Мобилка: максимально справа и отдалить, чтобы лицо не перекрывалось */
-          @media (max-width: 640px){
+          /* Мобилка: максимально справа и чуть ниже, чтобы лицо не перекрывалось */
+          @media (max-width:640px){
             .hero-bg{
               background-size: 85%;
               background-position: 98% 58%;
             }
           }
           /* Планшеты */
-          @media (min-width: 641px) and (max-width: 1023px){
+          @media (min-width:641px) and (max-width:1023px){
             .hero-bg{
               background-size: 70%;
               background-position: 105% center;
               background-color: #ebe9e6;
             }
           }
-          .result-subtitle {
-            position: relative;
-            padding-top: 12px;
-            margin-top: 8px;
+          .result-subtitle{
+            position:relative; padding-top:12px; margin-top:8px;
           }
-          .result-subtitle::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 64px; height: 2px;
+          .result-subtitle::before{
+            content:''; position:absolute; top:0; left:0; width:64px; height:2px;
             background: linear-gradient(90deg, rgba(59,130,246,.5) 0%, transparent 100%);
           }
-          /* Мягкая читаемость для строки "Результат" */
+          /* Мягкая читаемость для "Результат" */
           .soft-outline{
-            padding: 6px 10px;
-            border-radius: 10px;
-            background: linear-gradient( to right, rgba(255,255,255,.75), rgba(255,255,255,.35) );
+            padding:6px 10px; border-radius:10px;
+            background: linear-gradient(to right, rgba(255,255,255,.75), rgba(255,255,255,.35));
             backdrop-filter: blur(2px) saturate(105%);
             -webkit-backdrop-filter: blur(2px) saturate(105%);
             box-shadow: 0 0 0 1px rgba(255,255,255,.25) inset;
@@ -320,7 +307,7 @@ export default function App() {
         `}</style>
       </section>
 
-      {/* 01 — фон: пудровый бежево-голубой, увеличены безопасные отступы заголовка */}
+      {/* 01 — фон: пудровый бежево-голубой, безопасные отступы для заголовка/маркера */}
       <section id="comparison" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(to_bottom,#f5f2ef_0%,#fdfcfb_60%)]">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -486,11 +473,11 @@ export default function App() {
         </div>
       </section>
 
-      {/* 05 — бонусы: компактнее на мобиле, не удаляю рилсы; фокус на вмещаемости */}
+      {/* 05 — бонусы: компактнее на мобиле, рилсы не удаляем */}
       <section id="bonuses" className="relative py-9 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f0ff_0%,#fff7fb_60%,#ffffff_100%)] overflow-hidden">
         <SectionMarker n="05" />
 
-        {/* очень деликатные конфетти */}
+        {/* деликатные конфетти */}
         <div className="confetti-container">
           {[...Array(12)].map((_, i) => (
             <div key={i} className="confetti" style={{
@@ -511,7 +498,7 @@ export default function App() {
             </p>
           </div>
 
-          {/* компакт: меньше отступы, но обложки остаются крупными */}
+          {/* компакт: меньше отступы, обложки крупные */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-5 sm:mt-7">
             {[
               { image: "/images/bonus1.png", title: "Гайд «Работа с клиентской базой»", desc: "Повторные записи без рекламы → возвращайте старых клиентов.", old: "27€" },
@@ -534,20 +521,15 @@ export default function App() {
         </div>
 
         <style jsx>{`
-          .confetti-container { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
-          .confetti {
-            position:absolute; width:8px; height:8px; opacity:0;
-            background: linear-gradient(45deg, #b197fc 0%, #a29bfe 100%);
-            animation: confetti-fall linear infinite;
-            border-radius: 2px;
-          }
+          .confetti-container{ position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+          .confetti{ position:absolute; width:8px; height:8px; opacity:0;
+            background: linear-gradient(45deg,#b197fc 0%,#a29bfe 100%);
+            animation: confetti-fall linear infinite; border-radius:2px; }
           .confetti:nth-child(2n){ background: linear-gradient(45deg,#f093fb 0%,#f5576c 100%); }
           .confetti:nth-child(3n){ background: linear-gradient(45deg,#4facfe 0%,#00f2fe 100%); }
           .confetti:nth-child(4n){ background: linear-gradient(45deg,#43e97b 0%,#38f9d7 100%); }
-          @keyframes confetti-fall {
-            0% { transform: translateY(-80px) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-          }
+          @keyframes confetti-fall{ 0%{transform:translateY(-80px) rotate(0deg); opacity:1;}
+                                   100%{transform:translateY(100vh) rotate(360deg); opacity:0;} }
         `}</style>
       </section>
 
@@ -569,7 +551,7 @@ export default function App() {
               "Повысишь средний чек через правильные предложения.",
               "Станешь увереннее — на всё есть готовый ответ.",
             ].map((t, i) => (
-              <div key={i} className="flex items-start gap-3 sm:gap-4 bg-white/90 p-4 sm:p-5 rounded-2xl border border-teal-50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 reveal-up" style={{animationDelay:`${i*80}ms`}}>
+              <div key={i} className="flex items-start gap-3 sm:gap-4 bg-white/90 p-4 sm:p-5 rounded-2xl border border-teал-50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 reveal-up" style={{animationDelay:`${i*80}ms`}}>
                 <div className="w-5 h-5 sm:w-6 sm:h-6 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg className="w-3 h-3 sm:w-4 sm:h-4 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 </div>
@@ -580,7 +562,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 07 — отзывы: компакт, без тёмных рамок */}
+      {/* 07 — отзывы: компакт, без тёмных рамок; рилсы — центральная больше */}
       <section id="reviews" className="relative py-10 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f7fa_0%,#ffffff_70%)]">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -607,7 +589,7 @@ export default function App() {
             ))}
           </div>
 
-          {/* Рилсы: оставлены; центральная — крупнее (главная) */}
+          {/* Рилсы: три в ряд, акцент на центральной (главной) */}
           <div className="flex gap-2 sm:gap-3 justify-center items-center overflow-x-auto pb-2 reels-container">
             {INSTAGRAM_REELS.slice(0, 3).map((url, idx) => (
               <div
@@ -626,27 +608,24 @@ export default function App() {
         </div>
 
         <style jsx>{`
-          .reels-container { max-width: 100%; scroll-snap-type: x mandatory; }
-          .reels-container > * { scroll-snap-align: center; }
+          .reels-container{ max-width:100%; scroll-snap-type:x mandatory; }
+          .reels-container > *{ scroll-snap-align:center; }
 
-          .reel-card-small { width: 140px; height: 250px; }
-          .reel-card-featured { width: 180px; height: 320px; }
+          .reel-card-small{ width:140px; height:250px; }
+          .reel-card-featured{ width:180px; height:320px; }
 
-          @media (min-width: 640px){
-            .reel-card-small { width: 200px; height: 355px; }
-            .reel-card-featured { width: 260px; height: 460px; }
+          @media (min-width:640px){
+            .reel-card-small{ width:200px; height:355px; }
+            .reel-card-featured{ width:260px; height:460px; }
           }
-          @media (min-width: 1024px){
-            .reel-card-small { width: 220px; height: 391px; }
-            .reel-card-featured { width: 280px; height: 500px; }
+          @media (min-width:1024px){
+            .reel-card-small{ width:220px; height:391px; }
+            .reel-card-featured{ width:280px; height:500px; }
           }
 
           .reel-card-small :global(iframe),
-          .reel-card-featured :global(iframe) {
-            width: 100% !important;
-            height: 100% !important;
-            display: block;
-            border: none;
+          .reel-card-featured :global(iframe){
+            width:100% !important; height:100% !important; display:block; border:none;
           }
         `}</style>
       </section>
@@ -798,26 +777,21 @@ export default function App() {
       )}
 
       <style jsx>{`
-        @keyframes fade-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        @keyframes fade-in{ from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
+        @keyframes slide-up{ from{transform:translateY(100%);} to{transform:translateY(0);} }
+        @keyframes float{ 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-10px);} }
 
-        .reveal-up { opacity: 0; animation: fade-in 0.8s ease-out forwards; }
-        .animate-slide-up { animation: slide-up 0.3s ease-out; }
+        .reveal-up{ opacity:0; animation:fade-in .8s ease-out forwards; }
+        .animate-slide-up{ animation:slide-up .3s ease-out; }
 
         .js-heading{
-          opacity: 0;
-          transform: translateY(14px);
-          transition: opacity .7s ease, transform .7s ease;
-          will-change: opacity, transform;
+          opacity:0; transform:translateY(14px);
+          transition:opacity .7s ease, transform .7s ease; will-change:opacity, transform;
         }
-        .js-heading.head-in{
-          opacity: 1;
-          transform: translateY(0);
-        }
+        .js-heading.head-in{ opacity:1; transform:translateY(0); }
 
-        @media (hover: hover) {
-          .hover\\:shadow-lg:hover { animation: float 2s ease-in-out infinite; }
+        @media (hover:hover){
+          .hover\\:shadow-lg:hover{ animation: float 2s ease-in-out infinite; }
         }
       `}</style>
     </div>
