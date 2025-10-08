@@ -216,7 +216,7 @@ export default function App() {
       </header>
 
       {/* HERO — человек «дальше», пустота слева, лицо не перекрывается */}
-      <section className="relative min-h-[88vh] flex items-center pt-24 hero-bg">
+      <section className="relative min-h-[75vh] sm:min-h-[88vh] flex items-center pt-20 sm:pt-24 pb-8 sm:pb-12 hero-bg">
         {/* деликатный верхний градиент для читаемости */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/65 via-white/35 to-transparent md:from-white/45 md:via-white/25 md:to-transparent pointer-events-none"></div>
 
@@ -274,11 +274,11 @@ export default function App() {
               background-color: #fff;
             }
           }
-          /* На мобиле: лицо не перекрыто текстом, фото отодвинуто вправо-вниз */
+          /* На мобиле: лицо не перекрыто текстом, фото заполняет весь фон */
           @media (max-width: 640px){
             .hero-bg{
-              background-size: 130%;
-              background-position: 85% 60%;
+              background-size: cover;
+              background-position: 72% center;
             }
           }
           .result-subtitle {
@@ -297,7 +297,7 @@ export default function App() {
       </section>
 
       {/* 01 — пудровый бежево-голубой */}
-      <section id="comparison" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(to_bottom,#f5f2ef_0%,#fdfcfb_60%)]">
+      <section id="comparison" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(to_bottom,#f5f2ef_0%,#fdfcfb_60%)]">
         <SectionMarker n="01" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-2">
@@ -362,7 +362,7 @@ export default function App() {
       </section>
 
       {/* 02 — пудровый лавандовый */}
-      <section id="why" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#faf7f9_0%,#ffffff_70%)]">
+      <section id="why" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#faf7f9_0%,#ffffff_70%)]">
         <SectionMarker n="02" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
@@ -391,7 +391,7 @@ export default function App() {
       </section>
 
       {/* 03 — пудровый мятный */}
-      <section id="for" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#f3f9f6_0%,#ffffff_70%)]">
+      <section id="for" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f3f9f6_0%,#ffffff_70%)]">
         <SectionMarker n="03" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
@@ -422,7 +422,7 @@ export default function App() {
       </section>
 
       {/* 04 — пудровый серо-бежевый */}
-      <section id="whats-included" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#f7f5f3_0%,#ffffff_70%)]">
+      <section id="whats-included" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f7f5f3_0%,#ffffff_70%)]">
         <SectionMarker n="04" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center">
@@ -463,7 +463,7 @@ export default function App() {
       </section>
 
       {/* 05 — бонусы с пудровым лавандовым и лёгкими конфетти */}
-      <section id="bonuses" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#f5f0ff_0%,#fff7fb_60%,#ffffff_100%)] overflow-hidden">
+      <section id="bonuses" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f0ff_0%,#fff7fb_60%,#ffffff_100%)] overflow-hidden">
         <SectionMarker n="05" />
 
         {/* конфетти — очень деликатные */}
@@ -528,7 +528,7 @@ export default function App() {
       </section>
 
       {/* 06 — «Что изменится сразу» центр + тонкое подчёркивание, пудровый фон */}
-      <section id="immediate" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#f2f9f6_0%,#ffffff_75%)]">
+      <section id="immediate" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f2f9f6_0%,#ffffff_75%)]">
         <SectionMarker n="06" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-6 sm:mb-8">
@@ -557,14 +557,14 @@ export default function App() {
       </section>
 
       {/* 07 — отзывы: пудровый голубой */}
-      <section id="reviews" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#f5f7fa_0%,#ffffff_70%)]">
+      <section id="reviews" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f5f7fa_0%,#ffffff_70%)]">
         <SectionMarker n="07" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-6 sm:mb-8">
             Отзывы клиентов
           </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 mb-6 sm:mb-8">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6 sm:mb-8 max-w-4xl mx-auto">
             {[1, 2, 4].map((n) => (
               <button
                 key={n}
@@ -576,70 +576,56 @@ export default function App() {
                 <img
                   src={`/images/reviews/review${n}.png`}
                   alt={`Отзыв ${n}`}
-                  className="w-full h-44 sm:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                  className="w-full h-36 sm:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-300"
                   loading="lazy"
                 />
               </button>
             ))}
           </div>
 
-          {/* Рилсы: новая схема — 3-е главное (крупное) справа, остальные слева стопкой */}
-          <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 justify-center items-center reels-container">
-            {/* Группа малых рилсов */}
-            <div className="flex gap-3 justify-center items-start flex-wrap lg:flex-col small-reels-group">
-              {INSTAGRAM_REELS.slice(1).map((url, idx) => (
-                <div
-                  key={url}
-                  className="reel-card-small rounded-xl overflow-hidden border-2 border-gray-200 shadow-md flex-shrink-0 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 reveal-up"
-                  style={{animationDelay:`${idx*100}ms`}}
-                >
-                  <InstaEmbed url={url} maxWidth={200} />
-                </div>
-              ))}
-            </div>
-
-            {/* Главный рилс (3-й) */}
-            <div className="reel-card-featured rounded-xl overflow-hidden border-2 border-blue-300 shadow-xl flex-shrink-0 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 reveal-up" style={{animationDelay:"100ms"}}>
-              <InstaEmbed url={INSTAGRAM_REELS[0]} maxWidth={320} />
-            </div>
+          {/* Рилсы: три в ряд, акцент на второй (центральный) */}
+          <div className="flex gap-2 sm:gap-3 justify-center items-center overflow-x-auto pb-2 reels-container">
+            {INSTAGRAM_REELS.slice(0, 3).map((url, idx) => (
+              <div
+                key={url}
+                className={`${
+                  idx === 1 ? 'reel-card-featured' : 'reel-card-small'
+                } rounded-xl overflow-hidden border-2 ${
+                  idx === 1 ? 'border-blue-400' : 'border-gray-200'
+                } shadow-md flex-shrink-0 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 reveal-up`}
+                style={{animationDelay:`${idx*100}ms`}}
+              >
+                <InstaEmbed url={url} maxWidth={idx === 1 ? 280 : 220} />
+              </div>
+            ))}
           </div>
         </div>
 
         <style jsx>{`
           .reels-container {
             max-width: 100%;
-            overflow-x: auto;
-            padding-bottom: 8px;
+            scroll-snap-type: x mandatory;
           }
-          .small-reels-group {
-            gap: 12px;
-          }
-          @media (max-width: 1023px){
-            .small-reels-group {
-              flex-direction: row;
-              overflow-x: auto;
-              width: 100%;
-              justify-content: flex-start;
-              padding-bottom: 8px;
-            }
+          .reels-container > * {
+            scroll-snap-align: center;
           }
 
           .reel-card-small {
-            width: 160px;
-            height: 280px;
+            width: 140px;
+            height: 250px;
           }
           .reel-card-featured {
-            width: 240px;
-            height: 420px;
+            width: 180px;
+            height: 320px;
           }
 
           @media (min-width: 640px){
-            .reel-card-small { width: 180px; height: 320px; }
-            .reel-card-featured { width: 280px; height: 490px; }
+            .reel-card-small { width: 200px; height: 355px; }
+            .reel-card-featured { width: 260px; height: 460px; }
           }
           @media (min-width: 1024px){
-            .reel-card-small { width: 200px; height: 355px; }
-            .reel-card-featured { width: 320px; height: 560px; }
+            .reel-card-small { width: 220px; height: 391px; }
+            .reel-card-featured { width: 280px; height: 500px; }
           }
 
           .reel-card-small :global(iframe),
@@ -653,7 +639,7 @@ export default function App() {
       </section>
 
       {/* 08 — Оффер: скидка 85%, пудровый фон */}
-      <section id="offer" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#ffffff_0%,#f7f5f3_70%)]">
+      <section id="offer" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#ffffff_0%,#f7f5f3_70%)]">
         <SectionMarker n="08" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-6 sm:mb-8">
@@ -743,7 +729,7 @@ export default function App() {
       </section>
 
       {/* 09 — FAQ пудровый серый */}
-      <section id="faq" className="relative py-12 sm:py-14 lg:py-16 bg-[linear-gradient(180deg,#f9f7f6_0%,#ffffff_70%)]">
+      <section id="faq" className="relative py-8 sm:py-12 lg:py-14 bg-[linear-gradient(180deg,#f9f7f6_0%,#ffffff_70%)]">
         <SectionMarker n="09" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="js-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-gray-900">
